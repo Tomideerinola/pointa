@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Outfit:wght@800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root { --primary-purple: #6f42c1; --dark-purple: #4b228a; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; overflow: hidden; }
+    
+    .auth-split { height: 100vh; display: flex; }
+    
+    .auth-visual {
+        flex: 1;
+        background: linear-gradient(rgba(111, 66, 193, 0.4), rgba(15, 8, 26, 0.9)), 
+                    url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1000&q=80');
+        background-size: cover;
+        background-position: center;
+        display: none; /* Hidden on mobile */
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 60px;
+        color: white;
+    }
+
+    @media (min-width: 992px) { .auth-visual { display: flex; } }
+
+    .auth-form-container {
+        width: 100%;
+        max-width: 500px;
+        margin: auto;
+        padding: 40px;
+    }
+
+    .brand-logo {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: var(--primary-purple);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 40px;
+    }
+
+    .form-control {
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-purple);
+        box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.1);
+    }
+
+    .btn-auth {
+        background: var(--primary-purple);
+        color: white;
+        padding: 12px;
+        border-radius: 12px;
+        font-weight: 700;
+        width: 100%;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .btn-auth:hover { background: var(--dark-purple); color: white; transform: translateY(-2px); }
+    
+    .social-auth-btn {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px;
+        width: 100%;
+        background: white;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: 0.2s;
+    }
+</style>
+</head>
+<body>
+    <div class="auth-split">
+        <div class="auth-form-container">
+            <a href="index.html" class="brand-logo">
+                <span style="color: var(--primary-purple); line-height: 0;">
+                    <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_18078_104881)">
+                            <mask id="mask0_18078_104881" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
+                                <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="white" />
+                            </mask>
+                            <g mask="url(#mask0_18078_104881)">
+                                <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="currentColor" />
+                                <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
+                            </g>
+                        </g>
+                        <defs><clipPath id="clip0_18078_104881"><rect width="34" height="34" fill="white" /></clipPath></defs>
+                    </svg>
+                </span>
+                <span style="background: linear-gradient(45deg, var(--primary-purple), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pointa</span>
+            <span class="badge ms-2" style="font-size: 10px; background: var(--light-purple); color: var(--primary-purple);">User</span>
+
+            </a>
+            <h2 class="fw-800 mb-2">Join the Community</h2>
+            <p class="text-muted mb-4">Find your next unforgettable moment.</p>
+    
+            <form>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold">FIRST NAME</label>
+                        <input type="text" class="form-control" placeholder="John">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold">LAST NAME</label>
+                        <input type="text" class="form-control" placeholder="Doe">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">EMAIL ADDRESS</label>
+                    <input type="email" class="form-control" placeholder="john@example.com">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold">PASSWORD</label>
+                    <input type="password" class="form-control" placeholder="Create a password">
+                </div>
+                <button type="submit" class="btn-auth mb-4">Create Account</button>
+            </form>
+    
+            <p class="text-center text-muted">Want to host events? <a href="signup-organizer.html" class="text-purple fw-bold text-decoration-none">Register as Organizer</a></p>
+        </div>
+        
+        <div class="auth-visual" style="background-image: linear-gradient(rgba(111, 66, 193, 0.4), rgba(15, 8, 26, 0.9)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=80');">
+            <h1 class="display-4 fw-800">Your ticket to <br>everywhere.</h1>
+        </div>
+    </div>
+</body>
+</html>

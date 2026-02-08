@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pointa | The Ultimate Event Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Outfit:wght@800&family=Syne:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-purple: #6f42c1;
+            --dark-purple: #4b228a;
+            --light-purple: #f3e8ff;
+            --accent-violet: #8a2be2;
+            --text-main: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            background-color: #fcfcfc;
+        }
+
+        /* Nav Styling */
+        .navbar {
+            padding: 1rem 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #eee;
+        }
+
+        .navbar-brand-custom {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none !important;
+        }
+
+        .brand-text {
+            background: linear-gradient(45deg, var(--primary-purple), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* HERO SECTION - REWORKED OVERLAY */
+        .hero {
+            position: relative;
+            padding: 180px 0 140px;
+            /* Darker, purple-tinted gradient so the image is visible but text is clear */
+            background: linear-gradient(45deg, rgba(15, 8, 26, 0.8), rgba(111, 66, 193, 0.4)), 
+                        url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: 1; /* Ensures it stays behind the stats bar */
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            color: white;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero .lead {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 400;
+        }
+
+        /* Buttons */
+        .btn-purple {
+            background: var(--primary-purple);
+            color: white;
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-weight: 700;
+            border: none;
+            transition: 0.3s ease;
+        }
+
+        .btn-purple:hover {
+            background: var(--dark-purple);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(111, 66, 193, 0.3);
+        }
+
+        /* STATS BAR - FIXED NEGATIVE MARGIN */
+        .stats-bar {
+            background: white;
+            margin-top: -60px; /* Pulls it up over the hero */
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            padding: 40px;
+            position: relative;
+            z-index: 100; /* Forces it to the front */
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            color: var(--primary-purple);
+            font-weight: 800;
+            display: block;
+        }
+
+        /* Event Cards */
+        .event-card {
+            border: none;
+            border-radius: 20px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background: white;
+        }
+        .event-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .badge-purple {
+            background: var(--light-purple);
+            color: var(--primary-purple);
+            font-weight: 700;
+        }
+
+        footer {
+            background: #0f081a;
+            color: #d1d1d1;
+            padding: 80px 0 30px;
+        }
+        .organizer-cta-v3 {
+        background: #ffffff;
+        border-radius: 35px;
+        overflow: hidden;
+        border: 2px solid var(--light-purple);
+        box-shadow: 0 20px 40px rgba(111, 66, 193, 0.08);
+    }
+
+    .cta-image-column {
+        background-image: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'); /* Black people at a vibrant event */
+        background-size: cover;
+        background-position: center;
+        min-height: 450px;
+    }
+
+    .cta-content-v3 {
+        padding: 60px;
+    }
+
+    .cta-content-v3 h2 {
+        color: #0f081a;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .cta-content-v3 p {
+        color: #555;
+        line-height: 1.7;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 18px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .feature-icon-box {
+        width: 35px;
+        height: 35px;
+        background: var(--light-purple);
+        color: var(--primary-purple);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .btn-create-event {
+        background: var(--primary-purple);
+        color: white;
+        padding: 18px 45px;
+        border-radius: 15px;
+        font-weight: 800;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.3s;
+        border: none;
+    }
+
+    .btn-create-event:hover {
+        background: var(--dark-purple);
+        color: white;
+        transform: translateY(-3px);
+    }
+    .footer-section {
+        background: #0f081a; /* Deep midnight purple */
+        color: rgba(255, 255, 255, 0.7);
+        padding: 100px 0 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Subtle background glow for the footer */
+    .footer-section::before {
+        content: '';
+        position: absolute;
+        top: -150px;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        background: rgba(111, 66, 193, 0.05);
+        border-radius: 50%;
+        filter: blur(100px);
+    }
+
+    .footer-brand .brand-text {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        letter-spacing: -1px;
+        background: linear-gradient(45deg, #fff, rgba(255,255,255,0.7));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .footer-section h5 {
+        color: white;
+        font-weight: 700;
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+    }
+
+    .footer-link {
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+
+    .footer-link:hover {
+        color: var(--primary-purple);
+        transform: translateX(5px);
+    }
+
+    .social-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        color: white;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    .social-icon:hover {
+        background: var(--primary-purple);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    .footer-hr {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    /* Stats Bar Refinements */
+    .stats-bar {
+        background: white;
+        margin-top: -60px; 
+        border-radius: 24px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+        padding: 40px;
+        position: relative;
+        z-index: 100;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .stat-item h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.8rem;
+        color: var(--primary-purple);
+        font-weight: 800;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+    }
+
+    .stat-label {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #6c757d;
+    }
+
+
+    /* =========================
+   MOBILE & SMALL DEVICES
+   ========================= */
+
+/* Phones & very small devices */
+@media (max-width: 576px) {
+
+/* Navbar */
+.navbar-brand-custom {
+    font-size: 1.4rem;
+    gap: 8px;
+}
+
+.navbar .btn {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+}
+
+/* HERO */
+.hero {
+    padding: 120px 0 100px;
+    background-attachment: scroll; /* fixes mobile lag */
+}
+
+.hero h1 {
+    font-size: 2.2rem;
+    line-height: 1.25;
+}
+
+.hero .lead {
+    font-size: 1rem;
+    padding: 0 10px;
+}
+
+.hero .btn {
+    width: 100%;
+}
+
+.hero .d-flex {
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* STATS BAR */
+.stats-bar {
+    margin-top: -30px;
+    padding: 25px 15px;
+    border-radius: 18px;
+}
+
+.stat-item {
+    border: none !important;
+    margin-bottom: 20px;
+}
+
+.stat-item h2 {
+    font-size: 2rem;
+}
+
+/* Section headers */
+h2, h3 {
+    font-size: 1.6rem;
+}
+
+/* Trending filter */
+.dropdown {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.dropdown button {
+    width: 100%;
+}
+
+/* EVENT CARDS */
+.event-card {
+    padding: 15px;
+}
+
+.event-card img {
+    height: 180px;
+}
+
+/* Selling soon cards */
+.card .row {
+    flex-direction: column;
+}
+
+.card img {
+    height: 200px;
+    margin-bottom: 15px;
+}
+
+/* CTA SECTION */
+.cta-image-column {
+    min-height: 280px;
+}
+
+.cta-content-v3 {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.cta-content-v3 h2 {
+    font-size: 2rem;
+}
+
+.feature-item {
+    justify-content: center;
+}
+
+.cta-content-v3 .d-flex {
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* FOOTER */
+.footer-section {
+    padding: 70px 0 30px;
+    text-align: center;
+}
+
+.footer-section .social-icon {
+    margin: 0 auto;
+}
+
+.footer-section .d-flex.gap-2 {
+    justify-content: center;
+}
+}
+
+/* =========================
+TABLETS & MEDIUM DEVICES
+========================= */
+@media (max-width: 992px) {
+
+/* HERO */
+.hero h1 {
+    font-size: 2.8rem;
+}
+
+/* STATS BAR */
+.stat-item h2 {
+    font-size: 2.3rem;
+}
+
+/* CTA */
+.cta-content-v3 {
+    padding: 40px;
+}
+
+/* FOOTER */
+.footer-section {
+    padding-top: 80px;
+}
+}
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand-custom" href="#">
+                <span style="color: var(--primary-purple); line-height: 0;">
+                    <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_18078_104881)">
+                            <mask id="mask0_18078_104881" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
+                                <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="white" />
+                            </mask>
+                            <g mask="url(#mask0_18078_104881)">
+                                <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="currentColor" />
+                                <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
+                            </g>
+                        </g>
+                        <defs><clipPath id="clip0_18078_104881"><rect width="34" height="34" fill="white" /></clipPath></defs>
+                    </svg>
+                </span>
+                <span class="brand-text">Pointa</span>
+            </a>
+            <div class="collapse navbar-collapse" id="navPointa">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link px-3" href="#">Browse Events</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle px-3" href="#" id="catDrop" role="button" data-bs-toggle="dropdown">Categories</a>
+                        <ul class="dropdown-menu border-0 shadow-sm mt-3">
+                            <li><a class="dropdown-item" href="#">Conferences</a></li>
+                            <li><a class="dropdown-item" href="#">Workshops</a></li>
+                            <li><a class="dropdown-item" href="#">Music & Art</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#">Pricing</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="#" class="btn text-dark fw-bold px-3">Sign In</a>
+                    <a href="#" class="btn btn-purple shadow-sm px-4">Create Event</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container text-center hero-content">
+            <span class="badge mb-3 px-3 py-2 shadow-sm" style="background: rgba(255,255,255,0.2); color: white; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.3);">
+                <i class="fa-solid fa-sparkles me-1"></i> NEW: Hybrid Events Support
+            </span>
+            
+            <h1 class="display-3 fw-800 mb-4">
+                Connect through <br>
+                <span style="color: #c084fc; position: relative; display: inline-block;">
+                    unforgettable
+                    <svg style="position: absolute; bottom: -8px; left: 0; width: 100%;" viewBox="0 0 314 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14.5C51.3333 7.66667 151.4 -4.3 298 6" stroke="#c084fc" stroke-width="4" stroke-linecap="round"/></svg>
+                </span> 
+                moments.
+            </h1>
+            
+            <p class="lead mb-5 mx-auto" style="max-width: 750px;">
+                Whether it's a neighborhood workshop, a sold-out concert, or a global tech summit—Pointa is where your next great memory begins.
+            </p>
+            
+            <div class="d-flex justify-content-center gap-3">
+                <button class="btn btn-purple btn-lg shadow">Explore Events</button>
+                <button class="btn btn-light btn-lg" style="border-radius: 12px; font-weight: 700;">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- <div class="container">
+        <div class="stats-bar">
+            <div class="row text-center">
+                <div class="col-md-3 border-end">
+                    <span class="stat-number" data-target="50">0</span>
+                    <p class="text-muted fw-bold small text-uppercase">Events Hosted (k+)</p>
+                </div>
+                <div class="col-md-3 border-end">
+                    <span class="stat-number" data-target="12">0</span>
+                    <p class="text-muted fw-bold small text-uppercase">Tickets Sold (M+)</p>
+                </div>
+                <div class="col-md-3 border-end">
+                    <span class="stat-number" data-target="5">0</span>
+                    <p class="text-muted fw-bold small text-uppercase">Avg Rating (/5)</p>
+                </div>
+                <div class="col-md-3">
+                    <span class="stat-number">24/7</span>
+                    <p class="text-muted fw-bold small text-uppercase">Live Support</p>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="row text-center">
+                <div class="col-md-3 border-end stat-item">
+                    <h2><span class="stat-number" data-target="1000">0</span>+</h2>
+                    <p class="stat-label mb-0">Events Hosted</p>
+                </div>
+                
+                <div class="col-md-3 border-end stat-item">
+                    <h2><span class="stat-number" data-target="20000">0</span>+</h2>
+                    <p class="stat-label mb-0">Tickets Sold</p>
+                </div>
+                
+                <div class="col-md-3 border-end stat-item">
+                    <h2><span class="stat-number" data-target="4">0</span>.<span class="stat-number" data-target="9">0</span></h2>
+                    <p class="stat-label mb-0">User Rating</p>
+                </div>
+                
+                <div class="col-md-3 stat-item">
+                    <h2>24/7</h2>
+                    <p class="stat-label mb-0">Live Support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="py-5 mt-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h6 class="text-uppercase fw-bold text-muted mb-2">Curated for you</h6>
+                    <h3 class="fw-bold">Trending Near You</h3>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-dark dropdown-toggle px-4 py-2 fw-bold" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 12px; border-width: 2px;">
+                        <i class="fa-solid fa-filter me-2 small"></i> Filter by Category
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2" aria-labelledby="categoryDropdown" style="border-radius: 15px; min-width: 220px;">
+                        <li><a class="dropdown-item rounded-3 active" href="#">All Categories</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-microphone-lines me-2 opacity-50"></i> Concerts & Raves</a></li>
+                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-rings-wedding me-2 opacity-50"></i> Owambe & Weddings</a></li>
+                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-laptop-code me-2 opacity-50"></i> Tech & Summits</a></li>
+                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-church me-2 opacity-50"></i> Religious Gatherings</a></li>
+                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-utensils me-2 opacity-50"></i> Food & Drink Fests</a></li>
+                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-briefcase me-2 opacity-50"></i> Business & Corporate</a></li>
+                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-palette me-2 opacity-50"></i> Arts & Lifestyle</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card event-card h-100 p-3">
+                        <div class="position-relative">
+                            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                            <span class="badge position-absolute top-0 end-0 m-3 bg-white text-dark shadow-sm">Trending</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge badge-purple">Concerts & Raves</span>
+                                <span class="text-muted fw-bold small">Dec 24</span>
+                            </div>
+                            <h5 class="fw-bold">Detty December: Live in Lagos</h5>
+                            <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1 text-purple"></i> Eko Energy City, VI</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold mb-0 text-purple">₦25,000</span>
+                                <button class="btn btn-purple btn-sm px-4">Get Ticket</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-4 col-md-6">
+                    <div class="card event-card h-100 p-3">
+                        <div class="position-relative">
+                            <img src="https://images.unsplash.com/photo-1591115765373-520b7a21769b?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge badge-purple">Tech & Summits</span>
+                                <span class="text-muted fw-bold small">Mar 15</span>
+                            </div>
+                            <h5 class="fw-bold">Lagos Startup Week 2026</h5>
+                            <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1 text-purple"></i> Landmark Centre, VI</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold mb-0 text-purple">Free</span>
+                                <button class="btn btn-purple btn-sm px-4">Register</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-4 col-md-6">
+                    <div class="card event-card h-100 p-3">
+                        <div class="position-relative">
+                            <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge badge-purple">Food & Drink</span>
+                                <span class="text-muted fw-bold small">Apr 02</span>
+                            </div>
+                            <h5 class="fw-bold">The Abuja Food & Grill Fest</h5>
+                            <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1 text-purple"></i> Millennium Park, Abuja</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold mb-0 text-purple">₦5,000</span>
+                                <button class="btn btn-purple btn-sm px-4">Book Space</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background-color: #f8f9fa;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h6 class="text-uppercase fw-bold text-muted mb-2"><i class="fa-solid fa-fire-flame-curved text-danger me-2"></i>Selling Out Fast</h6>
+                    <h2 class="fw-bold">Happening <span style="color: var(--primary-purple);">Very Soon</span></h2>
+                </div>
+                <a href="#" class="btn btn-outline-purple rounded-pill px-4 fw-bold">View Weekend Guide</a>
+            </div>
+    
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm p-3" style="border-radius: 25px;">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=500&q=80" class="rounded-4 w-100" height="150" style="object-fit: cover;">
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="mt-3 mt-sm-0">
+                                    <span class="badge mb-2" style="background: #fff0f0; color: #ff4d4d;">Tomorrow</span>
+                                    <h5 class="fw-bold mb-1">Mainland Block Party</h5>
+                                    <p class="text-muted small mb-2"><i class="fa-solid fa-clock me-1"></i> Starts at 4:00 PM</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-purple">₦10,000</span>
+                                        <a href="#" class="btn btn-purple btn-sm rounded-pill px-3">Grab a Spot</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm p-3" style="border-radius: 25px;">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <img src="https://images.unsplash.com/photo-1528605248644-14dd04cb21c7?auto=format&fit=crop&w=500&q=80" class="rounded-4 w-100" height="150" style="object-fit: cover;">
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="mt-3 mt-sm-0">
+                                    <span class="badge mb-2" style="background: #eef2ff; color: #4338ca;">This Sunday</span>
+                                    <h5 class="fw-bold mb-1">Sunday Brunch & Paint</h5>
+                                    <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot me-1"></i> Lekki Phase 1, Lagos</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-purple">₦15,500</span>
+                                        <a href="#" class="btn btn-purple btn-sm rounded-pill px-3">Join In</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm p-3" style="border-radius: 25px;">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <img src="https://images.unsplash.com/photo-1540575861501-7ad058a29231?auto=format&fit=crop&w=500&q=80" class="rounded-4 w-100" height="150" style="object-fit: cover;">
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="mt-3 mt-sm-0">
+                                    <span class="badge mb-2" style="background: #f0fdf4; color: #16a34a;">In 3 Days</span>
+                                    <h5 class="fw-bold mb-1">Product Design Workshop</h5>
+                                    <p class="text-muted small mb-2"><i class="fa-solid fa-video me-1"></i> Virtual via Zoom</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-purple">Free</span>
+                                        <a href="#" class="btn btn-purple btn-sm rounded-pill px-3">Save Seat</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm p-3" style="border-radius: 25px;">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <img src="https://images.unsplash.com/photo-1438243394409-b837739e455a?auto=format&fit=crop&w=500&q=80" class="rounded-4 w-100" height="150" style="object-fit: cover;">
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="mt-3 mt-sm-0">
+                                    <span class="badge mb-2" style="background: #fefce8; color: #a16207;">This Weekend</span>
+                                    <h5 class="fw-bold mb-1">The Experience: Pre-Concert</h5>
+                                    <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot me-1"></i> Tafawa Balewa Square</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-purple">Free</span>
+                                        <a href="#" class="btn btn-purple btn-sm rounded-pill px-3">Register</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="organizer-cta-v3">
+                <div class="row g-0 align-items-center">
+                    <div class="col-lg-5">
+                        <div class="cta-image-column"></div>
+                    </div>
+    
+                    <div class="col-lg-7">
+                        <div class="cta-content-v3">
+                            <span class="badge mb-3 px-3 py-2" style="background: var(--light-purple); color: var(--primary-purple); font-weight: 800;">
+                                FOR ORGANIZERS
+                            </span>
+                            <h2 class="display-5 fw-800 mb-4">Empowering <span style="color: var(--primary-purple);">Organizers</span> across Nigeria.</h2>
+                            <p class="fs-5 mb-5">
+                                From Owambe celebrations in Lagos to tech summits in Abuja, Pointa provides the local payment support and management tools you need to succeed.
+                            </p>
+                            
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <div class="feature-item">
+                                        <div class="feature-icon-box"><i class="fa-solid fa-naira-sign"></i></div>
+                                        <span>Direct Naira Payouts</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon-box"><i class="fa-solid fa-bolt"></i></div>
+                                        <span>Instant QR Check-in</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="feature-item">
+                                        <div class="feature-icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                                        <span>Sales Analytics</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon-box"><i class="fa-solid fa-users"></i></div>
+                                        <span>Invite-only Access</span>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="d-flex align-items-center gap-4">
+                                <a href="#" class="btn-create-event">Get Started</a>
+                                <a href="#" class="text-dark fw-bold text-decoration-none">Learn More <i class="fa-solid fa-chevron-right ms-1 small"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="footer-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 mb-4">
+                    <a class="footer-brand d-flex align-items-center gap-2 mb-4 text-decoration-none" href="#">
+                        <span style="color: var(--primary-purple); line-height: 0;">
+                            <svg width="35" height="35" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_footer)">
+                                    <mask id="mask_footer" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
+                                        <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="white" />
+                                    </mask>
+                                    <g mask="url(#mask_footer)">
+                                        <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="currentColor" />
+                                        <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
+                                    </g>
+                                </g>
+                                <defs><clipPath id="clip0_footer"><rect width="34" height="34" fill="white" /></clipPath></defs>
+                            </svg>
+                        </span>
+                        <span class="brand-text">Pointa</span>
+                    </a>
+                    <p class="pe-lg-5">
+                        Connecting Nigeria through unforgettable moments. From Lagos raves to Abuja summits, we make event discovery seamless.
+                    </p>
+                    <div class="d-flex gap-2 mt-4">
+                        <a href="#" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+    
+                <div class="col-6 col-md-4 col-lg-2">
+                    <h5>Discover</h5>
+                    <div class="d-flex flex-column">
+                        <a href="#" class="footer-link">Concerts & Raves</a>
+                        <a href="#" class="footer-link">Owambe Hub</a>
+                        <a href="#" class="footer-link">Tech Summits</a>
+                        <a href="#" class="footer-link">Religious Events</a>
+                    </div>
+                </div>
+    
+                <div class="col-6 col-md-4 col-lg-2">
+                    <h5>Platform</h5>
+                    <div class="d-flex flex-column">
+                        <a href="#" class="footer-link">How it works</a>
+                        <a href="#" class="footer-link">Pricing</a>
+                        <a href="#" class="footer-link">Organizer App</a>
+                        <a href="#" class="footer-link">Help Center</a>
+                    </div>
+                </div>
+    
+                <div class="col-6 col-md-4 col-lg-2">
+                    <h5>Company</h5>
+                    <div class="d-flex flex-column">
+                        <a href="#" class="footer-link">About Us</a>
+                        <a href="#" class="footer-link">Careers</a>
+                        <a href="#" class="footer-link">Privacy Policy</a>
+                        <a href="#" class="footer-link">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+    
+            <hr class="footer-hr mt-5 mb-4">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="small mb-0">&copy; 2026 Pointa Events. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+                    <span class="small me-3"><i class="fa-solid fa-globe me-1"></i> Lagos, Nigeria</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+// Updated Counter Script to handle the "rolling" effect better
+const counters = document.querySelectorAll('.stat-number');
+    const speed = 100; // Lower is faster
+
+    const startCounters = () => {
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 20);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCount();
+        });
+    }
+
+    // Run when page loads
+    window.addEventListener('DOMContentLoaded', startCounters);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
