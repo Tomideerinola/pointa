@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | Pointa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Outfit:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-purple: #6f42c1;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-light);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            border-right: 1px solid #eee;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            padding: 24px;
+        }
+
+        .nav-link {
+            color: #64748b;
+            font-weight: 600;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--light-purple, #f3e8ff);
+            color: var(--primary-purple);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        /* Dashboard Cards */
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .icon-shape {
+            width: 48px;
+            height: 48px;
+            background: #f3e8ff;
+            color: var(--primary-purple);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .event-list-item {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #eee;
+            transition: 0.2s;
+        }
+
+        .event-list-item:hover {
+            border-color: var(--primary-purple);
+            transform: translateX(5px);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 991px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; }
+            .mobile-nav-toggle { display: block !important; }
+        }
+
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1001;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-purple);
+            color: white;
+            border: none;
+            box-shadow: 0 10px 20px rgba(111, 66, 193, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <button class="mobile-nav-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="d-flex align-items-center gap-2 mb-5">
+            <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--primary-purple);">Pointa.</span>
+        </div>
+
+        <nav>
+            <a href="#" class="nav-link active"><i class="fa-solid fa-house"></i> Overview</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-ticket"></i> My Tickets</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-heart"></i> Saved Events</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <hr class="my-4 text-muted opacity-25">
+            <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
+            <a href="#" class="nav-link text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="fw-800">Hello, John! 👋</h2>
+                <p class="text-muted">You have 3 upcoming events this month.</p>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end d-none d-md-block">
+                    <div class="fw-bold">John Doe</div>
+                    <div class="small text-muted">Premium Member</div>
+                </div>
+                <img src="https://ui-avatars.com/api/?name=John+Doe&background=6f42c1&color=fff" class="rounded-circle" width="45" height="45">
+            </div>
+        </header>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="icon-shape"><i class="fa-solid fa-calendar-check"></i></div>
+                        <span class="badge bg-success-subtle text-success">+2 new</span>
+                    </div>
+                    <h3 class="fw-800 mb-1">12</h3>
+                    <p class="text-muted small fw-bold mb-0">TOTAL EVENTS ATTENDED</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="icon-shape"><i class="fa-solid fa-wallet"></i></div>
+                    </div>
+                    <h3 class="fw-800 mb-1">₦45,000</h3>
+                    <p class="text-muted small fw-bold mb-0">WALLET BALANCE</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="icon-shape"><i class="fa-solid fa-star"></i></div>
+                    </div>
+                    <h3 class="fw-800 mb-1">450</h3>
+                    <p class="text-muted small fw-bold mb-0">REWARD POINTS</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">Upcoming Events</h4>
+                    <a href="#" class="text-purple text-decoration-none small fw-bold">View All</a>
+                </div>
+                
+                <div class="event-list-item d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-center p-2 rounded-3 bg-light" style="min-width: 60px;">
+                            <div class="small fw-bold">DEC</div>
+                            <div class="h5 fw-800 mb-0">24</div>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Detty December: Live in Lagos</h6>
+                            <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i> Eko Energy City</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-purple btn-sm rounded-pill px-3">View Ticket</button>
+                </div>
+
+                <div class="event-list-item d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-center p-2 rounded-3 bg-light" style="min-width: 60px;">
+                            <div class="small fw-bold">JAN</div>
+                            <div class="h5 fw-800 mb-0">05</div>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">New Year Tech Summit</h6>
+                            <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i> Civic Centre, VI</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-purple btn-sm rounded-pill px-3">View Ticket</button>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <h4 class="fw-bold mb-4">Recommended</h4>
+                <div class="card border-0 rounded-4 overflow-hidden mb-3">
+                    <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=400&q=80" class="card-img-top" height="150" style="object-fit: cover;">
+                    <div class="card-body">
+                        <h6 class="fw-bold">Lagos Jazz Night</h6>
+                        <p class="text-muted small">Based on your interest in "Music"</p>
+                        <a href="#" class="btn btn-purple w-100 btn-sm">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
