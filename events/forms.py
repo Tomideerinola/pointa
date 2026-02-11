@@ -59,9 +59,88 @@ class UserRegisterForm(UserCreationForm):
 
 
 class OrganizerRegisterForm(forms.ModelForm):
+    # Add password and confirm password fields
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Secure password"
+        }),
+        label="Password"
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Confirm password"
+        }),
+        label="Confirm Password"
+    )
+
     class Meta:
         model = Organizer
-        fields = ("organization_name", "email", "phone")
+        fields = ["organization_name", "email", "phone"]
+
+    def __init__(self, *args, **kwargs):
+            """
+            Style the form fields to match your template design
+            """
+            super().__init__(*args, **kwargs)
+
+            # ORGANIZATION/BUSINESS NAME
+            self.fields["organization_name"].widget.attrs.update({
+                "class": "form-control",
+                "placeholder": "e.g. Lagos Fun Events"
+            })
+
+            # EMAIL
+            self.fields["email"].widget.attrs.update({
+                "class": "form-control",
+                "placeholder": "contact@business.com"
+            })
+
+            # PHONE
+            self.fields["phone"].widget.attrs.update({
+                "class": "form-control",
+                "placeholder": "e.g. +234 801 234 5678"
+            })
+
+
+    def clean(self):
+        """
+        Ensure password and confirm_password match
+        """
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm = cleaned_data.get("confirm_password")
+
+        if password != confirm:
+            raise forms.ValidationError("Passwords do not match")
+
+        # Check if email already exists in User table
+        email = cleaned_data.get("email")
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("An account with this email already exists")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        """
+        Create Django User first, then Organizer linked to it
+        """
+        # Create User object
+        user = User.objects.create_user(
+            username=self.cleaned_data["email"],  # use email as username
+            email=self.cleaned_data["email"],
+            password=self.cleaned_data["password"]
+        )
+
+        # Create Organizer object
+        organizer = Organizer.objects.create(
+            user=user,
+            organization_name=self.cleaned_data["organization_name"],
+            phone=self.cleaned_data.get("phone", "")
+        )
+
+        return organizer
 
 
 class UserLoginForm(forms.Form):

@@ -112,30 +112,57 @@
             <h2 class="fw-800 mb-2">Host Events with Pointa</h2>
             <p class="text-muted mb-4">Professional tools for professional organizers.</p>
     
-            <form>
+            <form method="POST" action="{% url 'organizer_signup' %}">
+                {% csrf_token %}
+            
+                <!-- Organization Name -->
                 <div class="mb-3">
                     <label class="form-label small fw-bold">ORGANIZATION/BUSINESS NAME</label>
-                    <input type="text" class="form-control" placeholder="e.g. Lagos Fun Events">
+                    {{ form.organization_name }}
+                    {% if form.organization_name.errors %}
+                        <div class="text-danger small">{{ form.organization_name.errors }}</div>
+                    {% endif %}
                 </div>
+            
+                <!-- Email -->
                 <div class="mb-3">
                     <label class="form-label small fw-bold">OFFICIAL EMAIL</label>
-                    <input type="email" class="form-control" placeholder="contact@business.com">
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
                 </div>
+            
+                <!-- Phone -->
                 <div class="mb-3">
-                    <label class="form-label small fw-bold">EXPECTED MONTHLY VOLUME</label>
-                    <select class="form-control">
-                        <option>1-5 Events</option>
-                        <option>5-20 Events</option>
-                        <option>Large scale (20+)</option>
-                    </select>
+                    <label class="form-label small fw-bold">PHONE</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                        <div class="text-danger small">{{ form.phone.errors }}</div>
+                    {% endif %}
                 </div>
-                <div class="mb-4">
+            
+                <!-- Password -->
+                <div class="mb-3">
                     <label class="form-label small fw-bold">PASSWORD</label>
-                    <input type="password" class="form-control" placeholder="Secure password">
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="text-danger small">{{ form.password.errors }}</div>
+                    {% endif %}
                 </div>
+            
+                <!-- Confirm Password -->
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">CONFIRM PASSWORD</label>
+                    {{ form.confirm_password }}
+                    {% if form.confirm_password.errors %}
+                        <div class="text-danger small">{{ form.confirm_password.errors }}</div>
+                    {% endif %}
+                </div>
+            
                 <button type="submit" class="btn-auth mb-4" style="background: #1a1a1a;">Get Started as Host</button>
             </form>
-    
+            
             <p class="text-center text-muted">Already have a host account? <a href="{%url 'user_login'%}" class="text-dark fw-bold text-decoration-none">Log In</a></p>
         </div>
         

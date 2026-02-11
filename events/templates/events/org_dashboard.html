@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Console | Pointa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Outfit:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --pointa-purple: #6f42c1; --sidebar-bg: #0b0e14; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f4f7fe; }
+        
+        /* Sidebar */
+        .sidebar { width: 280px; height: 100vh; position: fixed; background: var(--sidebar-bg); padding: 30px 20px; color: #fff; }
+        .nav-link { color: #8a92a6; padding: 12px 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px; transition: 0.3s; margin-bottom: 5px; }
+        .nav-link:hover, .nav-link.active { background: rgba(111, 66, 193, 0.15); color: var(--pointa-purple); }
+        .nav-link.active { background: var(--pointa-purple); color: #fff; box-shadow: 0 10px 20px rgba(111, 66, 193, 0.2); }
+
+        /* Main Content */
+        .main-content { margin-left: 280px; padding: 40px; }
+        .stat-card { background: #fff; border-radius: 20px; padding: 25px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .icon-box { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        
+        .btn-create { background: var(--pointa-purple); color: #fff; border-radius: 12px; padding: 12px 25px; font-weight: 700; border: none; }
+        .btn-create:hover { background: #5a32a3; color: #fff; }
+
+        @media (max-width: 991px) { .sidebar { display: none; } .main-content { margin-left: 0; } }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="d-flex align-items-center gap-2 mb-5">
+            <span style="color: var(--primary-purple); line-height: 0;">
+                <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_18078_104881)">
+                        <mask id="mask0_18078_104881" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
+                            <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="white" />
+                        </mask>
+                        <g mask="url(#mask0_18078_104881)">
+                            <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="currentColor" />
+                            <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
+                        </g>
+                    </g>
+                    <defs><clipPath id="clip0_18078_104881"><rect width="34" height="34" fill="white" /></clipPath></defs>
+                </svg>
+            </span>
+            <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--primary-purple);">Pointa.</span>
+        </div>
+
+        <nav>
+            <a href="#" class="nav-link active"><i class="fa-solid fa-chart-pie"></i> Insights</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-calendar-plus"></i> My Events</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-users"></i> Attendees</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-wallet"></i> Payouts</a>
+            <hr class="my-4 opacity-10">
+            <a href="#" class="nav-link"><i class="fa-solid fa-user-circle"></i> Organizer Profile</a>
+            <a href="#" class="nav-link text-danger"><i class="fa-solid fa-power-off"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div id="flash-container"></div>
+
+        <header class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="fw-800 mb-1">Organizer Dashboard</h2>
+                <p class="text-muted">Welcome back, Lagos Fun Events Ltd.</p>
+            </div>
+            <button class="btn btn-create" onclick="showFlash('Event created successfully!', 'success')">
+                <i class="fa-solid fa-plus me-2"></i> Create New Event
+            </button>
+        </header>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="icon-box bg-primary-subtle text-primary mb-3"><i class="fa-solid fa-ticket"></i></div>
+                    <div class="text-muted small fw-bold">TOTAL TICKETS SOLD</div>
+                    <h3 class="fw-800 mt-1">1,284</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="icon-box bg-success-subtle text-success mb-3"><i class="fa-solid fa-naira-sign"></i></div>
+                    <div class="text-muted small fw-bold">GROSS REVENUE</div>
+                    <h3 class="fw-800 mt-1">₦4.2M</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="icon-box bg-info-subtle text-info mb-3"><i class="fa-solid fa-eye"></i></div>
+                    <div class="text-muted small fw-bold">EVENT VIEWS</div>
+                    <h3 class="fw-800 mt-1">12.5k</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="icon-box bg-warning-subtle text-warning mb-3"><i class="fa-solid fa-star"></i></div>
+                    <div class="text-muted small fw-bold">AVG. RATING</div>
+                    <h3 class="fw-800 mt-1">4.8</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <h5 class="fw-800 mb-4">Recent Ticket Sales</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Customer</th>
+                            <th>Event</th>
+                            <th>Tier</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Tunde Ednut</strong><br><small class="text-muted">tunde@mail.com</small></td>
+                            <td>Detty December</td>
+                            <td><span class="badge bg-purple-subtle text-purple">VIP</span></td>
+                            <td>₦75,000</td>
+                            <td><span class="badge bg-success">Paid</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // FLASH MESSAGE LOGIC
+        function showFlash(message, type) {
+            const container = document.getElementById('flash-container');
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show shadow-sm border-0 rounded-4 mb-4" role="alert">
+                    <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            container.append(wrapper);
+            // Auto-hide after 5 seconds
+            setTimeout(() => { wrapper.remove(); }, 5000);
+        }
+    </script>
+</body>
+</html>

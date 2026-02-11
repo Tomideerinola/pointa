@@ -74,7 +74,6 @@ class Organizer(models.Model):
 
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
-    website = models.URLField(blank=True)
     bio = models.TextField(blank=True)
 
     verified = models.BooleanField(default=False)

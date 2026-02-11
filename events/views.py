@@ -57,6 +57,24 @@ def user_login(request):
 
 
 
+
+def organizer_signup(request):
+    """
+    Signup view for organizers
+    """
+    if request.method == "POST":
+        form = OrganizerRegisterForm(request.POST)
+        if form.is_valid():
+            organizer = form.save()  # Creates both User and Organizer
+            auth_login(request, organizer.user)  # log in the user automatically
+            return redirect("org_dashboard")  # redirect to organizer dashboard
+    else:
+        form = OrganizerRegisterForm()
+
+    return render(request, "events/org_signup.html", {"form": form})
+
+
+
 def org_signup(request):
     return render(request, 'events/org_signup.html')
 
@@ -69,3 +87,20 @@ def dashboard(request):
     user = request.user
     context = {"user":user}
     return render(request, 'events/user_dashboard.html', context)
+
+
+@login_required
+def org_dashboard(request):
+    """
+    Organizer dashboard view.
+    Only accessible to logged-in users.
+    """
+    # Get the organizer profile of the logged-in user
+    try:
+        org = request.user.organizer  # this works because of the related_name='organizer'
+    except Organizer.DoesNotExist:
+        # Optional: handle case where logged-in user is not an organizer
+        org = None
+
+    context = {'organizer': org}
+    return render(request, 'events/org_dashboard.html', context)
