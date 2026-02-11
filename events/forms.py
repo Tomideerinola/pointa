@@ -1,6 +1,7 @@
 from django import forms
 from .models import Profile, Organizer
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 
@@ -61,3 +62,48 @@ class OrganizerRegisterForm(forms.ModelForm):
     class Meta:
         model = Organizer
         fields = ("organization_name", "email", "phone")
+
+
+class UserLoginForm(forms.Form):
+    """
+    Custom login form using email instead of username
+    """
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "class": "form-control",
+            "placeholder": "name@example.com",
+        }),
+        label="Email Address"
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "••••••••",
+        }),
+        label="Password"
+    )
+
+    def clean(self):
+        """
+        Authenticate user based on email and password
+        """
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        password = cleaned_data.get("password")
+
+        if email and password:
+            try:
+                # Get user by email
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                raise forms.ValidationError("Invalid email or password.")
+
+            # Check password
+            if not user.check_password(password):
+                raise forms.ValidationError("Invalid email or password.")
+
+            # Attach user object to form for easy login in view
+            cleaned_data["user"] = user
+
+        return cleaned_data

@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect , get_object_or_404
-from .forms import UserRegisterForm, OrganizerRegisterForm
-from django.contrib.auth import login as auth_login, authenticate
+from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm
+from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from .models import Organizer, Profile
+from django.contrib.auth.models import User
 
 # Create your views here.
+
+
+# homepage route 
 
 def home(request):
     return render(request, 'events/index.html')
@@ -20,13 +24,48 @@ def user_signup(request):
             form = UserRegisterForm()
     return render(request, 'events/user_signup.html', {'form':form})
 
+# user logout 
+
+def user_logout(request):
+    """
+    Logs out the current user and redirects to home page
+    """
+    logout(request)  # Clear the session
+    return redirect('home')  # Redirect to homepage (or login)
+
+
+# user login view 
+def user_login(request):
+    """
+    Handle login with email and password
+    """
+    form = UserLoginForm(request.POST or None)  # instantiate with POST data if available
+
+    if request.method == "POST":
+        if form.is_valid():
+            # Get the authenticated user from cleaned_data
+            user = form.cleaned_data["user"]
+
+            # Log the user in
+            auth_login(request, user)
+
+            # Redirect to dashboard
+            return redirect("dashboard")
+
+    # Always pass the form to the template, even if GET or invalid POST
+    return render(request, "events/login.html", {"form": form, "DEBUG_VIEW": "THIS IS USER_LOGIN VIEW"})
+
+
+
 def org_signup(request):
     return render(request, 'events/org_signup.html')
 
 def login(request):
     return render(request, 'events/login.html')
 
+
+# user dashboard view 
 def dashboard(request):
     user = request.user
     context = {"user":user}
-    return render(request, 'events/dashboard.html', context)
+    return render(request, 'events/user_dashboard.html', context)
