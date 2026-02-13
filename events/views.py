@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect , get_object_or_404
-from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm
+from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from .models import Organizer, Profile
@@ -104,3 +104,29 @@ def org_dashboard(request):
 
     context = {'organizer': org}
     return render(request, 'events/org_dashboard.html', context)
+
+
+def create_event(request):
+    """
+    Allows an organizer to create an event
+    """
+
+    organizer = request.user.organizer
+
+    if request.method == "POST":
+        form = EventForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            event = form.save(commit=False)
+
+            # Attach logged in organizer
+            event.organizer = organizer
+
+            event.save()
+
+            return redirect("org_dashboard")
+
+    else:
+        form = EventForm()
+
+    return render(request, "events/create_event.html", {"form": form})

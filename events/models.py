@@ -1,5 +1,8 @@
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
 # Create your models here.
 
 
@@ -109,21 +112,7 @@ class State(models.Model):
         return self.name
     
 
-class LGA(models.Model):
-    """
-    Local Government Areas
-    """
 
-    state = models.ForeignKey(
-        State,
-        on_delete=models.CASCADE,
-        related_name="lgas"
-    )
-
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.name} - {self.state.name}"
     
 
 
@@ -149,22 +138,23 @@ class Event(models.Model):
     description = models.TextField(blank=True)
 
     date = models.DateField()
+    start_time = models.TimeField(default=datetime.time(9, 0))  # 09:00 AM
+    end_time = models.TimeField(default=datetime.time(17, 0))  # 05:00 PM
 
-    venue = models.CharField(max_length=255)
+    venue = models.CharField(max_length=255, blank=True)
 
-    state = models.ForeignKey(
-        State,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="events"
+
+    STATE_CHOICES = [
+        ("lagos", "Lagos"),
+        ("abuja", "Abuja (FCT)"),
+    ]
+
+    state = models.CharField(
+        max_length=20,
+        choices=STATE_CHOICES
     )
 
-    lga = models.ForeignKey(
-        LGA,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="events"
-    )
+    city = models.CharField(max_length=100, blank=True)
 
     image = models.ImageField(
         upload_to="events/",
@@ -183,11 +173,26 @@ class Event(models.Model):
         choices=STATUS_CHOICES,
         default="active"
     )
+    EVENT_TYPE_CHOICES = [
+    ("physical", "Physical Event"),
+    ("online", "Online Event"),
+    ("hybrid", "Hybrid Event"),
+    ]
+
+    event_type = models.CharField(
+        max_length=10,
+        choices=EVENT_TYPE_CHOICES,
+        default="physical"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.state})"
+    class Meta:
+        ordering = ["-created_at"]
+
+
 
 
 class Ticket(models.Model):

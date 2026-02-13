@@ -5,148 +5,324 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Organizer Console | Pointa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Outfit:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Outfit:wght@800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --pointa-purple: #6f42c1; --sidebar-bg: #0b0e14; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f4f7fe; }
+        :root { 
+            --pointa-purple: #6f42c1; 
+            --accent-soft: #f8f6ff;
+            --text-dark: #1a1a2e;
+        }
         
-        /* Sidebar */
-        .sidebar { width: 280px; height: 100vh; position: fixed; background: var(--sidebar-bg); padding: 30px 20px; color: #fff; }
-        .nav-link { color: #8a92a6; padding: 12px 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px; transition: 0.3s; margin-bottom: 5px; }
-        .nav-link:hover, .nav-link.active { background: rgba(111, 66, 193, 0.15); color: var(--pointa-purple); }
-        .nav-link.active { background: var(--pointa-purple); color: #fff; box-shadow: 0 10px 20px rgba(111, 66, 193, 0.2); }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #fdfdff; 
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        /* Sidebar Desktop */
+        .sidebar { 
+            width: 260px; 
+            height: 100vh; 
+            position: fixed; 
+            background: #fff; 
+            padding: 40px 24px; 
+            border-right: 1px solid #f0f0f5;
+            z-index: 1000;
+        }
+
+        .nav-link { 
+            color: #64748b; 
+            padding: 14px 18px; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            transition: 0.3s; 
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .nav-link i { font-size: 1.1rem; width: 20px; }
+        
+        .nav-link:hover { 
+            background: var(--accent-soft); 
+            color: var(--pointa-purple); 
+        }
+
+        .nav-link.active { 
+            background: var(--pointa-purple); 
+            color: #fff !important; 
+            box-shadow: 0 10px 20px rgba(111, 66, 193, 0.2); 
+        }
 
         /* Main Content */
-        .main-content { margin-left: 280px; padding: 40px; }
-        .stat-card { background: #fff; border-radius: 20px; padding: 25px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
-        .icon-box { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        
-        .btn-create { background: var(--pointa-purple); color: #fff; border-radius: 12px; padding: 12px 25px; font-weight: 700; border: none; }
-        .btn-create:hover { background: #5a32a3; color: #fff; }
+        .main-content { margin-left: 260px; padding: 40px 60px; transition: all 0.3s ease; }
 
-        @media (max-width: 991px) { .sidebar { display: none; } .main-content { margin-left: 0; } }
+        /* Mobile Navbar */
+        .mobile-top-nav {
+            display: none;
+            background: #fff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f5;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+
+        /* Beautiful Stat Cards */
+        .stat-card { 
+            background: #fff; 
+            border-radius: 24px; 
+            padding: 25px; 
+            border: 1px solid #f0f0f5; 
+            height: 100%;
+        }
+
+        .icon-square {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        /* Search & Buttons */
+        .search-bar {
+            background: #f1f5f9;
+            border-radius: 14px;
+            padding: 10px 20px;
+            border: none;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn-create { 
+            background: var(--pointa-purple); 
+            color: #fff; 
+            border-radius: 14px; 
+            padding: 12px 24px; 
+            font-weight: 700; 
+            border: none; 
+            white-space: nowrap;
+        }
+
+        /* Table Styling */
+        .custom-table {
+            background: #fff;
+            border-radius: 24px;
+            border: 1px solid #f0f0f5;
+            margin-top: 20px;
+        }
+        .table-responsive { border-radius: 24px; }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 991px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 25px 15px; }
+            .mobile-top-nav { display: flex; align-items: center; justify-content: space-between; }
+            .search-bar { max-width: 100%; margin-bottom: 15px; }
+            .header-flex { flex-direction: column; align-items: flex-start !important; }
+            .stat-card { padding: 20px; }
+        }
     </style>
 </head>
 <body>
 
+    <div class="mobile-top-nav shadow-sm">
+        <div class="d-flex align-items-center gap-2">
+            <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="34" height="34" rx="8" fill="#6f42c1"/>
+                <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
+            </svg>
+            <span style="font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem; color: var(--pointa-purple);">Pointa.</span>
+        </div>
+        <button class="btn border-0 text-purple p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+            <i class="fa-solid fa-bars-staggered fs-3"></i>
+        </button>
+    </div>
+    
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" style="width: 280px;">
+      <div class="offcanvas-header border-bottom">
+        <h5 class="fw-bold mb-0">Organizer Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+      </div>
+      <div class="offcanvas-body">
+        <nav>
+            <a href="#" class="nav-link active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-chart-line"></i> Create Event </a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-calendar-days"></i> My Events</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-ticket"></i> Tickets</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-wallet"></i> Payouts</a>
+            <div class="mt-5 pt-4 border-top">
+                <p class="small fw-bold text-uppercase text-muted px-3 mt-3">Account</p>
+                <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" class="nav-link text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+            </div>
+        </nav>
+      </div>
+    </div>
+
     <aside class="sidebar">
-        <div class="d-flex align-items-center gap-2 mb-5">
-            <span style="color: var(--primary-purple); line-height: 0;">
-                <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clip-path="url(#clip0_18078_104881)">
-                        <mask id="mask0_18078_104881" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
-                            <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="white" />
-                        </mask>
-                        <g mask="url(#mask0_18078_104881)">
-                            <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="currentColor" />
-                            <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
-                        </g>
-                    </g>
-                    <defs><clipPath id="clip0_18078_104881"><rect width="34" height="34" fill="white" /></clipPath></defs>
-                </svg>
-            </span>
-            <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--primary-purple);">Pointa.</span>
+        <div class="d-flex align-items-center gap-3 mb-5">
+            <svg width="42" height="42" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="34" height="34" rx="10" fill="#6f42c1"/>
+                <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
+            </svg>
+            <span style="font-family: 'Outfit'; font-weight: 800; font-size: 1.6rem; color: var(--pointa-purple);">Pointa.</span>
         </div>
 
         <nav>
-            <a href="#" class="nav-link active"><i class="fa-solid fa-chart-pie"></i> Insights</a>
-            <a href="#" class="nav-link"><i class="fa-solid fa-calendar-plus"></i> My Events</a>
-            <a href="#" class="nav-link"><i class="fa-solid fa-users"></i> Attendees</a>
+            <a href="#" class="nav-link active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            <a href="{%url 'create_event'%}" class="nav-link"><i class="fa-solid fa-plus"></i> Create Event </a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-calendar-days"></i> My Events</a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-ticket"></i> Tickets</a>
             <a href="#" class="nav-link"><i class="fa-solid fa-wallet"></i> Payouts</a>
-            <hr class="my-4 opacity-10">
-            <a href="#" class="nav-link"><i class="fa-solid fa-user-circle"></i> Organizer Profile</a>
-            <a href="#" class="nav-link text-danger"><i class="fa-solid fa-power-off"></i> Logout</a>
+            <div class="mt-5 pt-4 border-top">
+                <p class="small fw-bold text-uppercase text-muted px-3 mt-3">Account</p>
+                <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" class="nav-link text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+            </div>
         </nav>
     </aside>
-
+    {%block content%}
     <main class="main-content">
-        <div id="flash-container"></div>
-
-        <header class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <h2 class="fw-800 mb-1">Organizer Dashboard</h2>
-                <p class="text-muted">Welcome back, Lagos Fun Events Ltd.</p>
+        <header class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-4">
+            <div class="flex-grow-1">
+                <h2 class="fw-800 mb-1" style="letter-spacing: -0.5px;">Welcome back, {{organizer.organization_name}}</h2>
+                <p class="text-muted mb-0">Here’s what’s happening with your events today.</p>
             </div>
-            <button class="btn btn-create" onclick="showFlash('Event created successfully!', 'success')">
-                <i class="fa-solid fa-plus me-2"></i> Create New Event
-            </button>
+        
+            <div class="d-flex flex-column flex-sm-row gap-3 align-items-stretch align-items-md-center">
+                <div class="position-relative" style="min-width: 280px;">
+                    <i class="fa-solid fa-magnifying-glass position-absolute text-muted" style="left: 15px; top: 50%; transform: translateY(-50%);"></i>
+                    <input type="text" class="search-bar border ps-5" placeholder="Search orders..." style="height: 48px; background: #fff;">
+                </div>
+                
+                <button class="btn btn-create shadow-sm px-4" style="height: 48px;">
+                    <i class="fa-solid fa-plus me-2"></i> Create Event
+                </button>
+            </div>
         </header>
 
         <div class="row g-4 mb-5">
-            <div class="col-md-3">
+            <div class="col-6 col-xl-3 col-md-6">
                 <div class="stat-card">
-                    <div class="icon-box bg-primary-subtle text-primary mb-3"><i class="fa-solid fa-ticket"></i></div>
-                    <div class="text-muted small fw-bold">TOTAL TICKETS SOLD</div>
-                    <h3 class="fw-800 mt-1">1,284</h3>
+                    <div class="icon-square" style="background: #eef2ff; color: #4f46e5;"><i class="fa-solid fa-users"></i></div>
+                    <h3 class="fw-800 mb-1">1,284</h3>
+                    <p class="text-muted small fw-bold mb-0">TOTAL ATTENDEES</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-xl-3 col-md-6">
                 <div class="stat-card">
-                    <div class="icon-box bg-success-subtle text-success mb-3"><i class="fa-solid fa-naira-sign"></i></div>
-                    <div class="text-muted small fw-bold">GROSS REVENUE</div>
-                    <h3 class="fw-800 mt-1">₦4.2M</h3>
+                    <div class="icon-square" style="background: #f0fdf4; color: #16a34a;"><i class="fa-solid fa-naira-sign"></i></div>
+                    <h3 class="fw-800 mb-1">4.2M</h3>
+                    <p class="text-muted small fw-bold mb-0">REVENUE</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-xl-3 col-md-6">
                 <div class="stat-card">
-                    <div class="icon-box bg-info-subtle text-info mb-3"><i class="fa-solid fa-eye"></i></div>
-                    <div class="text-muted small fw-bold">EVENT VIEWS</div>
-                    <h3 class="fw-800 mt-1">12.5k</h3>
+                    <div class="icon-square" style="background: #fff7ed; color: #ea580c;"><i class="fa-solid fa-ticket"></i></div>
+                    <h3 class="fw-800 mb-1">452</h3>
+                    <p class="text-muted small fw-bold mb-0">LEFT</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-xl-3 col-md-6">
                 <div class="stat-card">
-                    <div class="icon-box bg-warning-subtle text-warning mb-3"><i class="fa-solid fa-star"></i></div>
-                    <div class="text-muted small fw-bold">AVG. RATING</div>
-                    <h3 class="fw-800 mt-1">4.8</h3>
+                    <div class="icon-square" style="background: #fdf2f8; color: #db2777;"><i class="fa-solid fa-heart"></i></div>
+                    <h3 class="fw-800 mb-1">4.8</h3>
+                    <p class="text-muted small fw-bold mb-0">RATING</p>
                 </div>
             </div>
         </div>
 
-        <div class="stat-card">
-            <h5 class="fw-800 mb-4">Recent Ticket Sales</h5>
+        <div class="custom-table shadow-sm border-0">
+            <div class="p-4 d-flex justify-content-between align-items-center bg-white border-bottom rounded-top-4">
+                <h5 class="fw-800 mb-0">Recent Registrations</h5>
+                <span class="badge bg-light text-dark border px-3 py-2">Total: 1,284</span>
+            </div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle mb-0" style="min-width: 800px;">
+                    <thead class="bg-light">
                         <tr>
-                            <th>Customer</th>
-                            <th>Event</th>
-                            <th>Tier</th>
-                            <th>Amount</th>
-                            <th>Status</th>
+                            <th class="ps-4 py-3 border-0 text-uppercase small fw-800 text-muted">Attendee</th>
+                            <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Event</th>
+                            <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Ticket Tier</th>
+                            <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Amount</th>
+                            <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Status</th>
+                            <th class="pe-4 py-3 border-0 text-end text-uppercase small fw-800 text-muted">Ref ID</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="bg-white">
                         <tr>
-                            <td><strong>Tunde Ednut</strong><br><small class="text-muted">tunde@mail.com</small></td>
-                            <td>Detty December</td>
-                            <td><span class="badge bg-purple-subtle text-purple">VIP</span></td>
-                            <td>₦75,000</td>
-                            <td><span class="badge bg-success">Paid</span></td>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 38px; height: 38px; font-size: 0.8rem;">TE</div>
+                                    <div>
+                                        <div class="fw-800 text-dark mb-0">Tunde Ednut</div>
+                                        <div class="small text-muted">tunde@mail.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-600 text-dark">Detty December 2026</div>
+                                <div class="small text-muted">Dec 24, 2026</div>
+                            </td>
+                            <td>
+                                <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background-color: #6f42c1; color: #ffffff; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.5px;">
+                                    <i class="fa-solid fa-crown me-1"></i> VIP ACCESS
+                                </span>
+                            </td>
+                            <td class="fw-800 text-dark">₦75,000</td>
+                            <td>
+                                <span class="d-flex align-items-center gap-1 text-success fw-bold small">
+                                    <i class="fa-solid fa-circle-check"></i> PAID
+                                </span>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <code class="small text-muted fw-bold">#PT-88291</code>
+                            </td>
+                        </tr>
+        
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 38px; height: 38px; font-size: 0.8rem;">CA</div>
+                                    <div>
+                                        <div class="fw-800 text-dark mb-0">Chioma Adeleke</div>
+                                        <div class="small text-muted">chi@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-600 text-dark">Mainland Block Party</div>
+                                <div class="small text-muted">Feb 20, 2026</div>
+                            </td>
+                            <td>
+                                <span class="badge px-3 py-2 rounded-pill border" style="background-color: #f8f9fa; color: #334155; font-weight: 700; font-size: 0.7rem;">
+                                    REGULAR
+                                </span>
+                            </td>
+                            <td class="fw-800 text-dark">₦25,000</td>
+                            <td>
+                                <span class="d-flex align-items-center gap-1 text-warning fw-bold small">
+                                    <i class="fa-solid fa-clock"></i> PENDING
+                                </span>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <code class="small text-muted fw-bold">#PT-99302</code>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
-
-    <script>
-        // FLASH MESSAGE LOGIC
-        function showFlash(message, type) {
-            const container = document.getElementById('flash-container');
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = `
-                <div class="alert alert-${type} alert-dismissible fade show shadow-sm border-0 rounded-4 mb-4" role="alert">
-                    <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            container.append(wrapper);
-            // Auto-hide after 5 seconds
-            setTimeout(() => { wrapper.remove(); }, 5000);
-        }
-    </script>
+    {%endblock content%}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

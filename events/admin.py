@@ -4,7 +4,6 @@ from .models import (
     Organizer,
     Category,
     State,
-    LGA,
     Event,
     Ticket,
     Order,
@@ -36,12 +35,6 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(State)
 class StateAdmin(admin.ModelAdmin):
     list_display = ("name",)
-
-
-@admin.register(LGA)
-class LGAAdmin(admin.ModelAdmin):
-    list_display = ("name", "state")
-    list_filter = ("state",)
 
 
 @admin.register(Event)

@@ -9,4 +9,5 @@ urlpatterns = [
      path("user/login/", views.user_login, name="user_login"),
      path("organizer/signup/", views.organizer_signup, name="organizer_signup"),
      path('organizer/dashboard/', views.org_dashboard, name='org_dashboard'),
+     path('create/event/', views.create_event, name="create_event")
 ]

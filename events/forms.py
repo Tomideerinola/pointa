@@ -1,8 +1,10 @@
 from django import forms
-from .models import Profile, Organizer
+from .models import Profile, Organizer, Event, Ticket
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 class UserRegisterForm(UserCreationForm):
@@ -186,3 +188,138 @@ class UserLoginForm(forms.Form):
             cleaned_data["user"] = user
 
         return cleaned_data
+    
+
+
+class EventForm(forms.ModelForm):
+    """
+    Form for creating an Event
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Fixes the "---------" issue in the dropdown
+        self.fields['category'].empty_label = "Select Category"
+        self.fields['state'].empty_label = "Select State"
+
+    class Meta:
+        model = Event
+        fields = [
+            "title",
+            "category",
+            "event_type",
+            "description",
+            "venue",
+            "date",
+            "state",
+            "city",
+            "image",
+            "start_time",
+            "end_time",
+        ]
+
+        widgets = {
+
+            # Text input
+            "title": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "e.g. Lagos Jazz Night 2026"
+            }),
+
+            # Dropdown (Category)
+            "category": forms.Select(attrs={
+                "class": "form-select"
+            }),
+
+            # Dropdown (Event Type)
+            "event_type": forms.Select(attrs={
+                "class": "form-select"
+            }),
+
+            # Textarea
+            "description": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 5,
+                "placeholder": "Tell your audience what to expect..."
+            }),
+
+            # Venue
+            "venue": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "e.g. Eko Hotels & Suites, VI"
+            }),
+
+            # Date
+            "date": forms.DateInput(attrs={
+                "type": "date",
+                "class": "form-control"
+            }),
+
+            # State dropdown
+            "state": forms.Select(attrs={
+                "class": "form-select"
+            }),
+            "city": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "e.g. Lekki, Yaba, Garki"
+            }),
+            # Image upload
+            "image": forms.FileInput(attrs={
+                "class": "form-control"
+            }),
+            # Start Time
+            "start_time": forms.TimeInput(attrs={
+                "type": "time",
+                "class": "form-control"
+            }),
+            # End Time
+            "end_time": forms.TimeInput(attrs={
+                "type": "time",
+                "class": "form-control"
+            }),
+        }
+
+        def clean_date(self):
+            date = self.cleaned_data.get("date")
+            if date < timezone.now().date():
+                raise ValidationError("Event date cannot be in the past.")
+            return date
+        
+        def clean(self):
+            cleaned_data = super().clean()
+            start_time = cleaned_data.get("start_time")
+            end_time = cleaned_data.get("end_time")
+
+            if start_time and end_time:
+                if end_time <= start_time:
+                    raise ValidationError("End time must be after start time.")
+
+            return cleaned_data
+
+
+class TicketForm(forms.ModelForm):
+    """
+    Form for creating ticket types
+    """
+
+    class Meta:
+        model = Ticket
+        fields = ["name", "price", "quantity_available"]
+
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "e.g. Regular Access"
+            }),
+            "price": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "0.00",
+                "min": "0"
+            }),
+            "quantity_available": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "100",
+                "min": "1"
+            }),
+
+        }
