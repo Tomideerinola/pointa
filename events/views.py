@@ -3,7 +3,7 @@ from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, Event
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Organizer, Profile, Event
+from .models import Organizer, Profile, Event, Ticket
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -182,4 +182,41 @@ def event_detail(request, event_id):
         "tickets": tickets,
     }
     return render(request, "events/event_detail.html", context)
+
+@login_required(login_url='user_login')
+def booking_confirm(request, event_id):
+    """
+    Handles ticket selection and shows confirmation page
+    Requires user to be logged in
+    """
+
+    event = get_object_or_404(Event, id=event_id)
+
+    if request.method == "POST":
+        ticket_id = request.POST.get("ticket_id")
+        quantity = int(request.POST.get("quantity", 1))
+
+        ticket = get_object_or_404(Ticket, id=ticket_id, event=event)
+
+        # Validate quantity
+        if quantity < 1:
+            messages.error(request, "Invalid ticket quantity.")
+            return redirect("event_detail", event_id=event.id)
+
+        if quantity > ticket.quantity_available:
+            messages.error(request, "Not enough tickets available.")
+            return redirect("event_detail", event_id=event.id)
+
+        total_amount = ticket.price * quantity
+
+        context = {
+            "event": event,
+            "ticket": ticket,
+            "quantity": quantity,
+            "total_amount": total_amount,
+        }
+
+        return render(request, "events/booking_confirm.html", context)
+
+    return redirect("event_detail", event_id=event.id)
 

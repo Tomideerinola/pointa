@@ -309,6 +309,132 @@
         color: var(--pointa-purple);
         text-decoration: none;
     }
+    /* Quantity Selector Styling */
+    .qty-group {
+        display: flex;
+        align-items: center;
+        background: var(--soft-purple);
+        border-radius: 12px;
+        padding: 5px;
+        width: fit-content;
+    }
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: none;
+        background: white;
+        color: var(--pointa-purple);
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .qty-btn:hover { background: var(--pointa-purple); color: white; }
+    
+    .qty-input {
+        width: 45px;
+        text-align: center;
+        border: none;
+        background: transparent;
+        font-weight: 800;
+        color: var(--dark-navy);
+        pointer-events: none; /* User must use buttons */
+    }
+
+    /* Summary Box */
+    .price-summary {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px dashed #e2e8f0;
+    }
+
+    /* Selection Highlighting */
+    .ticket-option input:checked + .ticket-content {
+        border-color: var(--pointa-purple);
+        background-color: #fdfbff;
+    }
+    
+    .ticket-content {
+        border: 1.5px solid #f1f5f9;
+        border-radius: 16px;
+        padding: 16px;
+        width: 100%;
+        cursor: pointer;
+        display: block;
+        transition: 0.2s;
+    }
+
+    /* Radio Selection Styling */
+    .ticket-option-wrapper {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    /* The Card Appearance */
+    .ticket-content-card {
+        border: 2px solid #f1f5f9;
+        border-radius: 20px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fff;
+        display: block;
+    }
+
+    /* When Radio is checked, style the card border */
+    input[name="ticket_id"]:checked + .ticket-content-card {
+        border-color: var(--pointa-purple);
+        background-color: #fdfbff;
+        box-shadow: 0 10px 20px rgba(111, 66, 193, 0.05);
+    }
+
+    /* Customizing the Radio Button color to match Pointa Purple */
+    input[name="ticket_id"] {
+        accent-color: var(--pointa-purple);
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    /* Quantity Controls */
+    .qty-group {
+        display: flex;
+        align-items: center;
+        background: #f1f5f9;
+        border-radius: 14px;
+        padding: 6px;
+    }
+    .qty-btn {
+        width: 35px;
+        height: 35px;
+        border-radius: 10px;
+        border: none;
+        background: white;
+        color: var(--pointa-purple);
+        font-weight: 800;
+        transition: 0.2s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .qty-btn:hover { background: var(--pointa-purple); color: white; }
+    .qty-input {
+        width: 40px;
+        text-align: center;
+        border: none;
+        background: transparent;
+        font-weight: 800;
+        font-size: 1.1rem;
+    }
+
+    .price-summary {
+        background: var(--soft-purple);
+        border-radius: 20px;
+        padding: 20px;
+        border: 1px solid rgba(111, 66, 193, 0.1);
+    }
     </style>
 </head>
 <body>
@@ -316,12 +442,7 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <!-- Brand -->
-            <a class="navbar-brand-custom" href="#">
-                <span style="color: var(--primary-purple); line-height: 0;">
-                    <!-- SVG logo here (your existing code) -->
-                </span>
-                <span class="brand-text">Pointa</span>
-            </a>
+            <a class="navbar-brand-custom" href="#"> <span style="color: var(--primary-purple); line-height: 0;"> <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg"> <g clip-path="url(#clip0_18078_104881)"> <mask id="mask0_18078_104881" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34"> <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="white" /> </mask> <g mask="url(#mask0_18078_104881)"> <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="currentColor" /> <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" /> </g> </g> <defs><clipPath id="clip0_18078_104881"><rect width="34" height="34" fill="white" /></clipPath></defs> </svg> </span> <span class="brand-text">Pointa</span> </a>
     
             <!-- Hamburger toggler -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPointa" aria-controls="navPointa" aria-expanded="false" aria-label="Toggle navigation">
@@ -339,7 +460,7 @@
                         {% if user.organizer %}
                             <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">Dashboard</a>
                         {% else %}
-                            <a href="{% url 'user_dashboard' %}" class="btn text-dark fw-bold px-3">My Account</a>
+                            <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">My Account</a>
                         {% endif %}
     
                         <form method="POST" action="{% url 'logout' %}" class="d-inline">
@@ -472,38 +593,66 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="ticket-sidebar">
-                    <h4 class="section-title mb-4">Reserve Your Spot</h4>
+                <div class="ticket-sidebar shadow-sm border p-4 rounded-5 bg-white">
+                    <h4 class="section-title mb-4">Select Tickets</h4>
                     
-                    <form action="#" method="POST">
+                    <form action="{% url 'booking_confirm' event.id %}" method="POST" id="ticketForm">
                         {% csrf_token %}
-                        <div class="ticket-list">
+                        
+                        <div class="ticket-list mb-4">
                             {% for ticket in tickets %}
-                            <div class="ticket-option d-flex justify-content-between align-items-center">
-                                <div class="form-check w-100">
-                                    <input class="form-check-input" type="radio" name="ticket_id" id="ticket{{ ticket.id }}" value="{{ ticket.id }}" {% if forloop.first %}checked{% endif %}>
-                                    <label class="form-check-label w-100 d-flex justify-content-between" for="ticket{{ ticket.id }}">
-                                        <span class="fw-bold">{{ ticket.name }}</span>
-                                        <span class="text-purple fw-800">₦{{ ticket.price|floatformat:0|intcomma }}</span>
-                                    </label>
-                                    <p class="small text-muted mb-0 mt-1">{{ ticket.quantity_available }} left</p>
-                                </div>
+                            <div class="ticket-option-wrapper">
+                                <input type="radio" name="ticket_id" id="ticket{{ ticket.id }}" 
+                                       value="{{ ticket.id }}" data-price="{{ ticket.price }}"
+                                       class="position-absolute mt-4 ms-3" 
+                                       {% if forloop.first %}checked{% endif %} style="z-index: 5;">
+                                
+                                <label class="ticket-content-card ps-5" for="ticket{{ ticket.id }}">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="ms-2">
+                                            <span class="fw-800 d-block text-dark fs-5">{{ ticket.name }}</span>
+                                            <span class="small text-muted">
+                                                <i class="fa-solid fa-ticket-simple me-1"></i> {{ ticket.quantity_available }} left
+                                            </span>
+                                        </div>
+                                        <span class="text-purple fw-800 h5 mb-0">₦{{ ticket.price|floatformat:0|intcomma }}</span>
+                                    </div>
+                                </label>
                             </div>
                             {% empty %}
-                            <div class="text-center py-4">
-                                <p class="text-muted mb-0">No tickets available yet.</p>
+                            <div class="text-center py-4 bg-light rounded-4">
+                                <p class="text-muted mb-0 small">Tickets are currently unavailable.</p>
                             </div>
                             {% endfor %}
                         </div>
-
-                        <button type="submit" class="btn btn-checkout">
-                            Get Ticket <i class="fa-solid fa-arrow-right ms-2"></i>
+            
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="fw-800 text-dark">Number of tickets</span>
+                            <div class="qty-group">
+                                <button type="button" class="qty-btn" onclick="updateQty(-1)">-</button>
+                                <input type="number" name="quantity" id="ticketQty" class="qty-input" value="1" readonly>
+                                <button type="button" class="qty-btn" onclick="updateQty(1)">+</button>
+                            </div>
+                        </div>
+            
+                        <div class="price-summary mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted small">Unit Price</span>
+                                <span class="fw-bold" id="unitPrice">₦0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white">
+                                <span class="fw-800 text-dark">Total Amount</span>
+                                <span class="fw-800 text-purple h3 mb-0" id="totalAmount">₦0</span>
+                            </div>
+                        </div>
+            
+                        <button type="submit" class="btn btn-purple w-100 py-3 rounded-4 shadow-sm fw-800">
+                            Proceed to Checkout <i class="fa-solid fa-chevron-right ms-2 small"></i>
                         </button>
                     </form>
-
-                    <div class="mt-4 text-center">
-                        <p class="small text-muted mb-0">Organized by</p>
-                        <h6 class="fw-bold">{{ event.organizer.company_name|default:"Pointa Organizer" }}</h6>
+            
+                    <div class="text-center mt-3">
+                        <p class="text-muted small mb-0"><i class="fa-solid fa-lock me-1"></i> Payments are 100% secure</p>
                     </div>
                 </div>
             </div>
@@ -511,5 +660,37 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateQty(change) {
+            const qtyInput = document.getElementById('ticketQty');
+            let currentQty = parseInt(qtyInput.value);
+            let newQty = currentQty + change;
+            if (newQty >= 1 && newQty <= 10) {
+                qtyInput.value = newQty;
+                calculateTotal();
+            }
+        }
+    
+        function calculateTotal() {
+            const selectedRadio = document.querySelector('input[name="ticket_id"]:checked');
+            const qty = parseInt(document.getElementById('ticketQty').value);
+            
+            if (selectedRadio) {
+                const price = parseFloat(selectedRadio.getAttribute('data-price'));
+                const total = price * qty;
+                
+                document.getElementById('unitPrice').innerText = "₦" + price.toLocaleString();
+                document.getElementById('totalAmount').innerText = "₦" + total.toLocaleString();
+            }
+        }
+    
+        // Update whenever a different radio is clicked
+        document.querySelectorAll('input[name="ticket_id"]').forEach(radio => {
+            radio.addEventListener('change', calculateTotal);
+        });
+    
+        // Run on load
+        window.onload = calculateTotal;
+    </script>
 </body>
 </html>
