@@ -1,5 +1,6 @@
 from django import forms
 from .models import Profile, Organizer, Event, Ticket
+from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -191,14 +192,14 @@ class UserLoginForm(forms.Form):
     
 
 
+
+
+
+
 class EventForm(forms.ModelForm):
-    """
-    Form for creating an Event
-    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Fixes the "---------" issue in the dropdown
         self.fields['category'].empty_label = "Select Category"
         self.fields['state'].empty_label = "Select State"
 
@@ -217,7 +218,6 @@ class EventForm(forms.ModelForm):
             "start_time",
             "end_time",
         ]
-
         widgets = {
 
             # Text input
@@ -279,22 +279,29 @@ class EventForm(forms.ModelForm):
             }),
         }
 
-        def clean_date(self):
-            date = self.cleaned_data.get("date")
-            if date < timezone.now().date():
-                raise ValidationError("Event date cannot be in the past.")
-            return date
-        
-        def clean(self):
-            cleaned_data = super().clean()
-            start_time = cleaned_data.get("start_time")
-            end_time = cleaned_data.get("end_time")
+    # 🔥 MOVE THESE OUTSIDE META
+    def clean_date(self):
+        date = self.cleaned_data.get("date")
+        if date < timezone.now().date():
+            raise ValidationError("Event date cannot be in the past.")
+        return date
 
-            if start_time and end_time:
-                if end_time <= start_time:
-                    raise ValidationError("End time must be after start time.")
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get("start_time")
+        end_time = cleaned_data.get("end_time")
 
-            return cleaned_data
+        if start_time and end_time:
+            if end_time <= start_time:
+                raise ValidationError("End time must be after start time.")
+
+        return cleaned_data
+
+
+
+
+
+
 
 
 class TicketForm(forms.ModelForm):
@@ -323,3 +330,71 @@ class TicketForm(forms.ModelForm):
             }),
 
         }
+
+
+class OrganizerLoginForm(forms.Form):
+    """
+    Login form for organizers.
+    We use a normal Form (not ModelForm) because
+    we are not creating a model instance.
+    """
+
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "class": "form-control",
+            "placeholder": "organizer@pointa.com"
+        })
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "••••••••"
+        })
+    )
+
+    remember_me = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            "class": "form-check-input"
+        })
+    )
+
+    def clean(self):
+        """
+        This method validates the email & password.
+        """
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        password = cleaned_data.get("password")
+
+        if email and password:
+            try:
+                # Find user by email
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                raise forms.ValidationError("Invalid email or password.")
+
+            # Authenticate using username + password
+            user = authenticate(
+                username=user.username,
+                password=password
+
+            )
+
+            if user is None:
+                raise forms.ValidationError("Invalid email or password.")
+
+            cleaned_data["user"] = user
+
+        return cleaned_data
+    
+
+
+TicketFormSet = inlineformset_factory(
+    Event,
+    Ticket,
+    form=TicketForm,
+    extra=1,          # show at least 1 empty ticket form
+    can_delete=True
+)

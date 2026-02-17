@@ -1,3 +1,4 @@
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -467,6 +468,60 @@ TABLETS & MEDIUM DEVICES
 }
 }
 
+/* Pointa Navigation Specific Styles */
+    .nav-link-pointa {
+        color: #1a1a2e;
+        font-weight: 700;
+        font-size: 0.95rem;
+        transition: 0.3s;
+        padding: 8px 16px;
+        border-radius: 10px;
+    }
+    .nav-link-pointa:hover {
+        background-color: #f3effb; /* soft-purple */
+        color: #6f42c1;
+    }
+    
+    .btn-pointa-primary {
+        background-color: #6f42c1;
+        color: #ffffff;
+        font-weight: 800;
+        border-radius: 12px;
+        padding: 10px 24px;
+        border: none;
+        transition: 0.3s;
+        box-shadow: 0 4px 12px rgba(111, 66, 193, 0.2);
+    }
+    .btn-pointa-primary:hover {
+        background-color: #5a32a3;
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    .btn-pointa-outline {
+        border: 1.5px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 700;
+        border-radius: 12px;
+        padding: 10px 20px;
+        transition: 0.3s;
+    }
+    .btn-pointa-outline:hover {
+        border-color: #6f42c1;
+        color: #6f42c1;
+        background: transparent;
+    }
+
+    .user-profile-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8fafc;
+        padding: 6px 12px;
+        border-radius: 50px;
+        border: 1px solid #e2e8f0;
+    }
+
     </style>
 </head>
 <body>
@@ -507,8 +562,39 @@ TABLETS & MEDIUM DEVICES
                     <li class="nav-item"><a class="nav-link px-3" href="#">Pricing</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{%url 'user_login'%}" class="btn text-dark fw-bold px-3">Sign In</a>
-                    <a href="#" class="btn btn-purple shadow-sm px-4">Create Event</a>
+                    <!-- <a href="{%url 'user_login'%}" class="btn text-dark fw-bold px-3">Sign In</a>
+                    <a href="{%url 'create_event'%}" class="btn btn-purple shadow-sm px-4">Create Event</a> -->
+                    {% if user.is_authenticated %}
+
+    {% if user.organizer %}
+        <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">
+            Dashboard
+        </a>
+    {% else %}
+        <a href="{% url 'user_dashboard' %}" class="btn text-dark fw-bold px-3">
+            My Account
+        </a>
+    {% endif %}
+
+    <form method="POST" action="{% url 'logout' %}" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger px-3">
+            Logout
+        </button>
+    </form>
+
+{% else %}
+
+    <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">
+        Sign In
+    </a>
+
+    <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">
+        Create Event
+    </a>
+
+{% endif %}
+
                 </div>
             </div>
         </div>
@@ -535,7 +621,7 @@ TABLETS & MEDIUM DEVICES
             
             <div class="d-flex justify-content-center gap-3">
                 <button class="btn btn-purple btn-lg shadow">Explore Events</button>
-                <button class="btn btn-light btn-lg" style="border-radius: 12px; font-weight: 700;">Learn More</button>
+                <button class="btn btn-light btn-lg" style="border-radius: 12px; font-weight: 700;">Start Hosting</button>
             </div>
         </div>
     </section>
@@ -616,67 +702,54 @@ TABLETS & MEDIUM DEVICES
             </div>
     
             <div class="row g-4">
+                {% for event in events %}
                 <div class="col-lg-4 col-md-6">
                     <div class="card event-card h-100 p-3">
                         <div class="position-relative">
-                            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
-                            <span class="badge position-absolute top-0 end-0 m-3 bg-white text-dark shadow-sm">Trending</span>
+                            {% if event.image %}
+                            <img src="{{ event.image.url }}" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                            {% else %}
+                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                            {% endif %}
+                            {% if event.status == "active" %}
+                            <span class="badge position-absolute top-0 end-0 m-3 bg-white text-dark shadow-sm px-3 py-2 rounded-pill small fw-bold">
+                                {{ event.event_type|title }}
+                            </span>
+                            {% endif %}
                         </div>
                         <div class="card-body p-0">
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="badge badge-purple">Concerts & Raves</span>
-                                <span class="text-muted fw-bold small">Dec 24</span>
+                                <span class="badge badge-purple">{{ event.category.name }}</span>
+                                <span class="text-muted fw-bold small">{{ event.date|date:"M d" }}</span>
                             </div>
-                            <h5 class="fw-bold">Detty December: Live in Lagos</h5>
-                            <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1 text-purple"></i> Eko Energy City, VI</p>
+                            <h5 class="fw-bold">{{ event.title }}</h5>
+                            <p class="text-muted small mb-3">
+                                <i class="fa-solid fa-location-dot me-1 text-purple"></i> {{ event.venue }}
+                            </p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 fw-bold mb-0 text-purple">₦25,000</span>
-                                <button class="btn btn-purple btn-sm px-4">Get Ticket</button>
+                                {% if event.tickets.exists %}
+                                    {% with ticket=event.tickets.first %}
+                                    <span class="h5 fw-bold mb-0 text-purple">
+                                        {% if ticket.price == 0 %}
+                                            Free
+                                        {% else %}
+                                            ₦{{ ticket.price|floatformat:0|intcomma }}
+                                        {% endif %}
+                                    </span>
+                                    {% endwith %}
+                                {% else %}
+                                    <span class="h5 fw-bold mb-0 text-purple">TBA</span>
+                                {% endif %}
+                                <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm px-4">View Event</a>
                             </div>
                         </div>
                     </div>
                 </div>
-    
-                <div class="col-lg-4 col-md-6">
-                    <div class="card event-card h-100 p-3">
-                        <div class="position-relative">
-                            <img src="https://images.unsplash.com/photo-1591115765373-520b7a21769b?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="badge badge-purple">Tech & Summits</span>
-                                <span class="text-muted fw-bold small">Mar 15</span>
-                            </div>
-                            <h5 class="fw-bold">Lagos Startup Week 2026</h5>
-                            <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1 text-purple"></i> Landmark Centre, VI</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 fw-bold mb-0 text-purple">Free</span>
-                                <button class="btn btn-purple btn-sm px-4">Register</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-                <div class="col-lg-4 col-md-6">
-                    <div class="card event-card h-100 p-3">
-                        <div class="position-relative">
-                            <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="badge badge-purple">Food & Drink</span>
-                                <span class="text-muted fw-bold small">Apr 02</span>
-                            </div>
-                            <h5 class="fw-bold">The Abuja Food & Grill Fest</h5>
-                            <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1 text-purple"></i> Millennium Park, Abuja</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 fw-bold mb-0 text-purple">₦5,000</span>
-                                <button class="btn btn-purple btn-sm px-4">Book Space</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% empty %}
+                <p class="text-muted fw-bold">No events found.</p>
+                {% endfor %}
             </div>
+            
         </div>
     </section>
 

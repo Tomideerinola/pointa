@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Login | Pointa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Outfit:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --pointa-purple: #6f42c1; }
+        
+        /* Ensure full height for the entire page */
+        html, body { height: 100%; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
+
+        .vh-100-container { height: 100vh; display: flex; }
+
+        /* Left Pane: Login */
+        .login-pane { 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 60px; 
+            background: #fff;
+        }
+        .form-content { width: 100%; max-width: 400px; }
+
+        /* Right Pane: Full Image */
+        .image-pane { 
+            flex: 1; 
+            background: linear-gradient(rgba(111, 66, 193, 0.2), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2070&auto=format&fit=crop'); 
+            background-size: cover; 
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            padding: 60px;
+        }
+
+        .image-overlay-text { color: white; border-left: 4px solid var(--pointa-purple); padding-left: 25px; }
+        .image-overlay-text h1 { font-family: 'Outfit'; font-weight: 800; font-size: 2.5rem; line-height: 1.1; margin-bottom: 10px; }
+
+        /* Brand Styling */
+        .brand-header { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 40px; }
+        .brand-name { font-family: 'Outfit'; font-size: 2rem; font-weight: 800; color: var(--pointa-purple); }
+
+        /* Inputs */
+        .form-label { font-weight: 700; font-size: 0.8rem; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control { 
+            border-radius: 12px; padding: 14px; border: 1.5px solid #e2e8f0; background: #f8fafc; transition: 0.3s;
+        }
+        .form-control:focus { border-color: var(--pointa-purple); box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.1); background: #fff; outline: none; }
+
+        /* Button */
+        .btn-primary-pointa { 
+            background: var(--pointa-purple); color: #fff; border-radius: 12px; padding: 15px; 
+            font-weight: 800; border: none; width: 100%; box-shadow: 0 10px 20px rgba(111, 66, 193, 0.2); 
+            margin-top: 10px; transition: 0.3s;
+        }
+        .btn-primary-pointa:hover { background: #5a32a3; transform: translateY(-2px); color: white; }
+
+        @media (max-width: 991px) { 
+            .image-pane { display: none; } 
+            .login-pane { padding: 30px; }
+        }
+
+
+
+        /* Widget Container */
+.contact-widget {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+}
+
+/* Floating Button */
+.fab-btn {
+    width: 60px;
+    height: 60px;
+    background: #6f42c1;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.fab-btn:hover {
+    transform: scale(1.1) rotate(5deg);
+    background: #5a32a3;
+}
+
+/* Contact Card */
+.contact-card {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 280px;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    animation: slideUp 0.3s ease-out;
+}
+
+.contact-header {
+    background: #6f42c1;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contact-method {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #1a1a2e;
+    transition: 0.2s;
+    border: 1px solid transparent;
+}
+
+.contact-method:hover {
+    background: #f8f6ff;
+    border-color: #6f42c1;
+    color: #6f42c1;
+}
+
+.icon-box {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.whatsapp { background: #25D366; }
+.email { background: #64748b; }
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+    </style>
+</head>
+<body>
+
+<div class="vh-100-container">
+    
+    <section class="login-pane">
+        <div class="form-content">
+            <a href="/" class="brand-header">
+                <svg width="45" height="45" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="34" height="34" rx="10" fill="#6f42c1"/>
+                    <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
+                </svg>
+                <span class="brand-name">Pointa.</span>
+            </a>
+
+            <h2 class="fw-800 mb-2">Organizer Login</h2>
+            <p class="text-muted mb-5">Welcome back. Enter your credentials to manage your events.</p>
+
+            <form method="POST">
+                {% csrf_token %}
+            
+                <div class="mb-4">
+                    <label class="form-label">Email Address</label>
+                    {{ form.email }}
+                </div>
+            
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="form-label">Password</label>
+                        <a href="#" class="text-decoration-none small fw-bold" style="color: var(--pointa-purple);">
+                            Forgot Password?
+                        </a>
+                    </div>
+                    {{ form.password }}
+                </div>
+            
+                <div class="mb-4 form-check">
+                    {{ form.remember_me }}
+                    <label class="form-check-label small fw-600 text-muted">
+                        Keep me logged in
+                    </label>
+                </div>
+            
+                <button type="submit" class="btn btn-primary-pointa">
+                    Sign In to Dashboard
+                </button>
+            
+                <div class="mt-5 text-center">
+                    <p class="small text-muted fw-600">
+                        Want to host an event?
+                        <a href="{% url 'organizer_signup' %}"
+                           class="text-decoration-none fw-800"
+                           style="color: var(--pointa-purple);">
+                            Create Account
+                        </a>
+                    </p>
+                </div>
+            </form>
+            
+        </div>
+    </section>
+
+    <aside class="image-pane">
+        <div class="image-overlay-text">
+            <h1>Experience<br>is Everything.</h1>
+            <p class="lead text-white-50">Manage Lagos' biggest events with Pointa.</p>
+        </div>
+    </aside>
+
+    <div class="contact-widget">
+        <div class="contact-card shadow-lg d-none" id="contactCard">
+            <div class="contact-header">
+                <h6 class="mb-0 fw-800 text-white">Need help?</h6>
+                <button class="btn-close btn-close-white small" onclick="toggleContact()"></button>
+            </div>
+            <div class="contact-body p-3">
+                <p class="small text-muted mb-3">Reach out to our team and we'll get back to you shortly.</p>
+                <a href="https://wa.me/yournumber" class="contact-method">
+                    <div class="icon-box whatsapp"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div>
+                        <span class="d-block fw-bold">WhatsApp</span>
+                        <span class="small text-muted">Instant response</span>
+                    </div>
+                </a>
+                <a href="mailto:support@pointa.com" class="contact-method mt-2">
+                    <div class="icon-box email"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                        <span class="d-block fw-bold">Email Support</span>
+                        <span class="small text-muted">Response in 24hrs</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    
+        <button class="fab-btn shadow-lg" onclick="toggleContact()">
+            <i class="fa-solid fa-message"></i>
+        </button>
+    </div>
+
+</div>
+
+</body>
+<script>
+    function toggleContact() {
+    const card = document.getElementById('contactCard');
+    if (card.classList.contains('d-none')) {
+        card.classList.remove('d-none');
+    } else {
+        card.classList.add('d-none');
+    }
+}
+</script>
+</html>

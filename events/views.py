@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect , get_object_or_404
-from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm
+from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from .models import Organizer, Profile
+from django.contrib import messages
+from .models import Organizer, Profile, Event
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -11,7 +12,8 @@ from django.contrib.auth.models import User
 # homepage route 
 
 def home(request):
-    return render(request, 'events/index.html')
+    events = Event.objects.filter(status="active").order_by("-date")  # show upcoming first
+    return render(request, 'events/index.html', {'events':events})
 
 def user_signup(request):
     if request.method == "POST":
@@ -74,22 +76,7 @@ def organizer_signup(request):
     return render(request, "events/org_signup.html", {"form": form})
 
 
-
-def org_signup(request):
-    return render(request, 'events/org_signup.html')
-
-def login(request):
-    return render(request, 'events/login.html')
-
-
-# user dashboard view 
-def dashboard(request):
-    user = request.user
-    context = {"user":user}
-    return render(request, 'events/user_dashboard.html', context)
-
-
-@login_required
+@login_required (login_url='organizer_login')
 def org_dashboard(request):
     """
     Organizer dashboard view.
@@ -106,27 +93,93 @@ def org_dashboard(request):
     return render(request, 'events/org_dashboard.html', context)
 
 
+def organizer_logout(request):
+    logout(request)
+    return redirect("organizer_login")
+
+
+
+# user dashboard view 
+def dashboard(request):
+    user = request.user
+    context = {"user":user}
+    return render(request, 'events/user_dashboard.html', context)
+
+
+
+@login_required(login_url='organizer_login')
 def create_event(request):
-    """
-    Allows an organizer to create an event
-    """
 
     organizer = request.user.organizer
 
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES)
+        ticket_formset = TicketFormSet(request.POST)
 
-        if form.is_valid():
+        if form.is_valid() and ticket_formset.is_valid():
+
             event = form.save(commit=False)
-
-            # Attach logged in organizer
             event.organizer = organizer
-
             event.save()
+
+            tickets = ticket_formset.save(commit=False)
+            for ticket in tickets:
+                ticket.event = event
+                ticket.save()
+            messages.success(request, f'Success! "{event.title}" has been created.')
 
             return redirect("org_dashboard")
 
     else:
         form = EventForm()
+        ticket_formset = TicketFormSet()
 
-    return render(request, "events/create_event.html", {"form": form})
+    return render(request, "events/create_event.html", {
+        "form": form,
+        "ticket_formset": ticket_formset
+    })
+
+
+def organizer_login(request):
+    """
+    Login view for organizers.
+    """
+
+    if request.method == "POST":
+        form = OrganizerLoginForm(request.POST)
+
+        if form.is_valid():
+            user = form.cleaned_data["user"]
+
+            # Log the user in
+            auth_login(request, user)
+
+            # Handle remember me
+            if not form.cleaned_data.get("remember_me"):
+                request.session.set_expiry(0)  # expires when browser closes
+
+            return redirect("org_dashboard")
+
+    else:
+        form = OrganizerLoginForm()
+
+    return render(request, "events/org_login.html", {"form": form})
+
+
+def events_list(request):
+    events = Event.objects.filter(status="active").order_by("-date")  # show upcoming first
+    return render(request, "events/events_list.html", {"events": events})
+
+
+def event_detail(request, event_id):
+    """
+    Show the details of a single event.
+    """
+    event = get_object_or_404(Event, id=event_id)
+    tickets = event.tickets.all()  # Get all ticket types for this event
+    context = {
+        "event": event,
+        "tickets": tickets,
+    }
+    return render(request, "events/event_detail.html", context)
+

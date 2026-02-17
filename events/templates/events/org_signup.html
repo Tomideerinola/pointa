@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-    :root { --primary-purple: #6f42c1; --dark-purple: #4b228a; }
+    :root { --primary-purple: #6f42c1; --dark-purple: #4b228a; --pointa-purple: #6f42c1; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; overflow: hidden; }
     
     .auth-split { height: 100vh; display: flex; }
@@ -85,6 +85,12 @@
         gap: 10px;
         transition: 0.2s;
     }
+    .btn-primary-pointa { 
+            background: var(--pointa-purple); color: #fff; border-radius: 12px; padding: 15px; 
+            font-weight: 800; border: none; width: 100%; box-shadow: 0 10px 20px rgba(111, 66, 193, 0.2); 
+            margin-top: 10px; transition: 0.3s;
+        }
+        .btn-primary-pointa:hover { background: #5a32a3; transform: translateY(-2px); color: white; }
 </style>
 </head>
 <body>
@@ -160,10 +166,10 @@
                     {% endif %}
                 </div>
             
-                <button type="submit" class="btn-auth mb-4" style="background: #1a1a1a;">Get Started as Host</button>
+                <button type="submit" class="btn-primary-pointa mb-4" style="background: #1a1a1a;">Get Started as Host</button>
             </form>
             
-            <p class="text-center text-muted">Already have a host account? <a href="{%url 'user_login'%}" class="text-dark fw-bold text-decoration-none">Log In</a></p>
+            <p class="text-center text-muted">Already have a host account? <a href="{%url 'organizer_login'%}" class="text-dark fw-bold text-decoration-none">Log In</a></p>
         </div>
         
         <div class="auth-visual" style="background-image: linear-gradient(rgba(26, 26, 26, 0.6), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1000&q=80');">

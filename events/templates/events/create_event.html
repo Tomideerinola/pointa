@@ -33,7 +33,16 @@
 
 <div class="container py-5" style="max-width: 900px;">
     <div class="mb-5">
-        <a href="/org/dashboard/" class="back-link mb-3"><i class="fa-solid fa-arrow-left-long"></i> Back to Dashboard</a>
+        <a href="{%url 'org_dashboard'%}" class="back-link mb-3"><i class="fa-solid fa-arrow-left-long"></i> Back to Dashboard</a>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         <h1 class="fw-800" style="font-family: 'Outfit';">Launch Your Event</h1>
         <p class="text-muted">Fill out the form below to create your event and start selling tickets.</p>
     </div>

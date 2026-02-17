@@ -154,14 +154,14 @@
       <div class="offcanvas-body">
         <nav>
             <a href="#" class="nav-link active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-            <a href="#" class="nav-link"><i class="fa-solid fa-chart-line"></i> Create Event </a>
+            <a href="{%url 'create_event'%}" class="nav-link"><i class="fa-solid fa-chart-line"></i> Create Event </a>
             <a href="#" class="nav-link"><i class="fa-solid fa-calendar-days"></i> My Events</a>
             <a href="#" class="nav-link"><i class="fa-solid fa-ticket"></i> Tickets</a>
             <a href="#" class="nav-link"><i class="fa-solid fa-wallet"></i> Payouts</a>
             <div class="mt-5 pt-4 border-top">
                 <p class="small fw-bold text-uppercase text-muted px-3 mt-3">Account</p>
                 <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
-                <a href="#" class="nav-link text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+                <a href="{%url 'organizer_logout'%}" class="nav-link text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
             </div>
         </nav>
       </div>
@@ -185,7 +185,7 @@
             <div class="mt-5 pt-4 border-top">
                 <p class="small fw-bold text-uppercase text-muted px-3 mt-3">Account</p>
                 <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
-                <a href="#" class="nav-link text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+                <a href="{%url 'organizer_logout'%}" class="nav-link text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
             </div>
         </nav>
     </aside>
@@ -203,13 +203,23 @@
                     <input type="text" class="search-bar border ps-5" placeholder="Search orders..." style="height: 48px; background: #fff;">
                 </div>
                 
-                <button class="btn btn-create shadow-sm px-4" style="height: 48px;">
-                    <i class="fa-solid fa-plus me-2"></i> Create Event
-                </button>
+                <a href="{% url 'create_event' %}" 
+                class="btn btn-create shadow-sm px-4" 
+                style="height: 48px;">
+                 <i class="fa-solid fa-plus me-2"></i> Create Event
+             </a>
             </div>
         </header>
 
         <div class="row g-4 mb-5">
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
             <div class="col-6 col-xl-3 col-md-6">
                 <div class="stat-card">
                     <div class="icon-square" style="background: #eef2ff; color: #4f46e5;"><i class="fa-solid fa-users"></i></div>
