@@ -121,3 +121,6 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+PAYSTACK_SECRET_KEY="sk_test_f703ed91e65546ea1981ae553a470af6b61c7fb7"
+

@@ -15,4 +15,8 @@ urlpatterns = [
     path('event/<int:event_id>/', views.event_detail, name="event_detail"),
     path('event/list/', views.events_list, name='events_list'),
     path('event/<int:event_id>/confirm/', views.booking_confirm, name='booking_confirm'),
+    path("pay/<int:order_id>/", views.initialize_payment, name="initialize_payment"),
+    path("verify-payment/", views.verify_payment, name="verify_payment"),
+    path("payment-success/", views.payment_success, name="payment_success"),
+    path("payment-failed/", views.payment_failed, name="payment_failed"),
 ]

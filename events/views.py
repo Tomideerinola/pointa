@@ -1,9 +1,13 @@
+import uuid
+import requests
+from django.conf import settings
+from django.urls import reverse
 from django.shortcuts import render, redirect , get_object_or_404
 from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Organizer, Profile, Event, Ticket
+from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -209,14 +213,142 @@ def booking_confirm(request, event_id):
 
         total_amount = ticket.price * quantity
 
+        # 🔥 Check if user already has a pending order for this event
+        existing_order = Order.objects.filter(
+            user=request.user,
+            event=event,
+            status="pending"
+        ).first()
+
+        if existing_order:
+            # Clear previous items (avoid duplicates)
+            existing_order.items.all().delete()
+            order = existing_order
+            order.total_amount = total_amount
+            order.save()
+        else:
+            order = Order.objects.create(
+                user=request.user,
+                event=event,
+                total_amount=total_amount,
+                status="pending"
+            )
+
+        # Create OrderItem
+        OrderItem.objects.create(
+            order=order,
+            ticket=ticket,
+            quantity=quantity
+        )
+
         context = {
             "event": event,
             "ticket": ticket,
             "quantity": quantity,
             "total_amount": total_amount,
+            "order": order,  
         }
 
         return render(request, "events/booking_confirm.html", context)
 
     return redirect("event_detail", event_id=event.id)
+
+
+@login_required
+def initialize_payment(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    # generate unique reference
+    reference = str(uuid.uuid4())
+    order.reference = reference
+    order.status = "pending"
+    order.save()
+
+    url = "https://api.paystack.co/transaction/initialize"
+
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    data = {
+        "email": request.user.email,
+        "amount": int(order.total_amount * 100),  # kobo
+        "reference": reference,
+        "callback_url": request.build_absolute_uri("/verify-payment/"),
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    response_data = response.json()
+
+    if response_data["status"]:
+        return redirect(response_data["data"]["authorization_url"])
+    else:
+        messages.error(request, "Unable to initialize payment.")
+        return redirect("booking_confirmation")
+    
+
+
+@login_required
+def verify_payment(request):
+    reference = request.GET.get("reference")
+
+    url = f"https://api.paystack.co/transaction/verify/{reference}"
+
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+    }
+
+    response = requests.get(url, headers=headers)
+    response_data = response.json()
+
+    if response_data["status"] and response_data["data"]["status"] == "success":
+
+        order = Order.objects.get(reference=reference)
+
+        if order.status != "paid":
+            order.status = "paid"
+            order.save()
+
+            # Create attendees
+            for item in order.items.all():
+                Attendee.objects.create(
+                    event=order.event,
+                    user=order.user,
+                    full_name=order.user.get_full_name(),
+                    email=order.user.email,
+                    tickets_qty=item.quantity,
+                    payment_status="paid",
+                    booking_ref=reference
+                )
+
+                # Reduce ticket quantity
+                ticket = item.ticket
+                ticket.quantity_available -= item.quantity
+                ticket.save()
+
+        return redirect(reverse("payment_success") + f"?reference={reference}")
+
+    else:
+        order = Order.objects.get(reference=reference)
+        order.status = "failed"
+        order.save()
+
+        return redirect("payment_failed")
+    
+
+def payment_success(request):
+    reference = request.GET.get("reference")
+    order = Order.objects.filter(reference=reference).first()
+
+    context = {
+        "order": order
+    }
+    return render(request, "events/success.html", context)
+
+
+def payment_failed(request):
+    return render(request, "events/failed.html")
+
+
 

@@ -163,10 +163,14 @@
                 </div>
             </div>
 
-            <button type="button" class="btn-paystack" onclick="payWithPaystack()">
-                <span>Confirm & Pay</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
+            <form method="POST" action="{% url 'initialize_payment' order.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-paystack">
+                    <span>Confirm & Pay</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+            
 
             <a href="javascript:history.back()" class="back-link">
                 <i class="fa-solid fa-chevron-left me-1"></i> Cancel and go back
@@ -176,21 +180,7 @@
 </div>
 
 <script src="https://js.paystack.co/v1/inline.js"></script>
-<script>
-    function payWithPaystack() {
-        let handler = PaystackPop.setup({
-            key: '{{ paystack_public_key }}', 
-            email: '{{ user_email }}',
-            amount: {{ total_amount }} * 100, // Amount in kobo
-            currency: 'NGN',
-            ref: 'PTA-' + Math.floor((Math.random() * 1000000000) + 1), 
-            callback: function(response){
-                window.location.href = "/payment-success/?ref=" + response.reference;
-            }
-        });
-        handler.openIframe();
-    }
-</script>
+
 
 </body>
 </html>
