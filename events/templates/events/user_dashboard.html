@@ -173,17 +173,12 @@
                     <div class="avatar-box rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" 
                     style="width: 48px; height: 48px; background: linear-gradient(135deg, #6f42c1, #a855f7); font-size: 0.9rem;">
                    
-                   {% if order.user.first_name or order.user.last_name %}
-                       {{ order.user.first_name|slice:":1"|upper }}{{ order.user.last_name|slice:":1"|upper }}
-                   {% elif order.user.username %}
-                       {{ order.user.username|slice:":2"|upper }}
-                   {% else %}
-                       <i class="fa-solid fa-user"></i>
-                   {% endif %}
-               </div>
+
+                       {{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+
+                    </div>
                     <div class="small text-muted">Premium Member</div>
                 </div>
-                <img src="https://ui-avatars.com/api/?name=John+Doe&background=6f42c1&color=fff" class="rounded-circle" width="45" height="45">
             </div>
         </header>
 

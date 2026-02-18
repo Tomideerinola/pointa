@@ -1,6 +1,7 @@
 import uuid
 import requests
 from django.conf import settings
+from django.utils import timezone
 from django.urls import reverse
 from django.shortcuts import render, redirect , get_object_or_404
 from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet
@@ -372,5 +373,13 @@ def payment_success(request):
 def payment_failed(request):
     return render(request, "events/failed.html")
 
+def my_events(request):
+        try:
+            org = request.user.organizer
+        except Organizer.DoesNotExist:
+            return redirect('organizer_login')
+    
+        events = Event.objects.filter(organizer=org)
 
+        return render(request, 'events/my_events.html', {"events":events, "now": timezone.now()})
 
