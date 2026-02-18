@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Events | Pointa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Outfit:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --p-purple: #6f42c1;
+                --p-soft: #f3effb; 
+                --p-dark: #0f172a;
+                --p-muted: #64748b; 
+                --primary-purple: #6f42c1;
+                --dark-purple: #4b228a;
+                --light-purple: #f3e8ff;
+                --accent-violet: #8a2be2;
+                --text-main: #1a1a1a;
+                
+                }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcff; color: var(--p-dark); }
+
+        /* --- Hero Search Section --- */
+        .search-hero {
+            background: linear-gradient(135deg, #6f42c1 0%, #431d9a 100%);
+            padding: 80px 0;
+            border-radius: 0 0 40px 40px;
+            color: white;
+            margin-bottom: 50px;
+        }
+        .search-container {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 30px auto -110px auto;
+            display: flex;
+            align-items: center;
+        }
+        .search-input { border: none; padding: 15px 20px; width: 100%; font-weight: 600; outline: none; }
+        .btn-search { background: var(--p-purple); color: white; border-radius: 15px; padding: 12px 25px; border: none; font-weight: 700; }
+
+        /* --- Filter Sidebar --- */
+        .filter-card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            position: sticky;
+            top: 100px;
+        }
+        .filter-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 20px; font-family: 'Outfit'; }
+        
+        /* --- Event Cards --- */
+        .event-card {
+            background: white;
+            border-radius: 28px;
+            border: 1px solid #f1f5f9;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            position: relative;
+        }
+        .event-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(111, 66, 193, 0.15); border-color: var(--p-purple); }
+        
+        .card-img-wrapper { position: relative; height: 200px; overflow: hidden; }
+        .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .event-card:hover .card-img-wrapper img { transform: scale(1.1); }
+        
+        .price-tag {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            padding: 5px 15px;
+            border-radius: 12px;
+            font-weight: 800;
+            color: var(--p-purple);
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+
+        .category-label {
+            background: var(--p-soft);
+            color: var(--p-purple);
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .event-title { font-family: 'Outfit'; font-weight: 800; font-size: 1.25rem; line-height: 1.3; margin-bottom: 12px; }
+        .event-meta { font-size: 0.85rem; color: var(--p-muted); display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        
+        .btn-view {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1.5px solid var(--p-soft);
+            background: var(--p-soft);
+            color: var(--p-purple);
+            font-weight: 700;
+            transition: 0.3s;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        .btn-view:hover { background: var(--p-purple); color: white; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: var(--p-purple); border-radius: 10px; }
+
+
+        /* nav css import  */
+
+         /* Nav Styling */
+         .navbar {
+            padding: 1rem 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #eee;
+        }
+
+        .navbar-brand-custom {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none !important;
+        }
+
+        .brand-text {
+            background: linear-gradient(45deg, var(--primary-purple), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* HERO SECTION - REWORKED OVERLAY */
+        .hero {
+            position: relative;
+            padding: 180px 0 140px;
+            /* Darker, purple-tinted gradient so the image is visible but text is clear */
+            background: linear-gradient(45deg, rgba(15, 8, 26, 0.8), rgba(111, 66, 193, 0.4)), 
+                        url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: 1; /* Ensures it stays behind the stats bar */
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            color: white;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero .lead {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 400;
+        }
+
+        /* Buttons */
+        .btn-purple {
+            background: var(--primary-purple);
+            color: white;
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-weight: 700;
+            border: none;
+            transition: 0.3s ease;
+        }
+
+        .btn-purple:hover {
+            background: var(--dark-purple);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(111, 66, 193, 0.3);
+        }
+
+        /* STATS BAR - FIXED NEGATIVE MARGIN */
+        .stats-bar {
+            background: white;
+            margin-top: -60px; /* Pulls it up over the hero */
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            padding: 40px;
+            position: relative;
+            z-index: 100; /* Forces it to the front */
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            color: var(--primary-purple);
+            font-weight: 800;
+            display: block;
+        }
+
+        /* Event Cards */
+        .event-card {
+            border: none;
+            border-radius: 20px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background: white;
+        }
+        .event-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .badge-purple {
+            background: var(--light-purple);
+            color: var(--primary-purple);
+            font-weight: 700;
+        }
+
+        footer {
+            background: #0f081a;
+            color: #d1d1d1;
+            padding: 80px 0 30px;
+        }
+        .organizer-cta-v3 {
+        background: #ffffff;
+        border-radius: 35px;
+        overflow: hidden;
+        border: 2px solid var(--light-purple);
+        box-shadow: 0 20px 40px rgba(111, 66, 193, 0.08);
+    }
+
+    .cta-image-column {
+        background-image: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'); /* Black people at a vibrant event */
+        background-size: cover;
+        background-position: center;
+        min-height: 450px;
+    }
+
+    .cta-content-v3 {
+        padding: 60px;
+    }
+
+    .cta-content-v3 h2 {
+        color: #0f081a;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .cta-content-v3 p {
+        color: #555;
+        line-height: 1.7;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 18px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .feature-icon-box {
+        width: 35px;
+        height: 35px;
+        background: var(--light-purple);
+        color: var(--primary-purple);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .btn-create-event {
+        background: var(--primary-purple);
+        color: white;
+        padding: 18px 45px;
+        border-radius: 15px;
+        font-weight: 800;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.3s;
+        border: none;
+    }
+
+    .btn-create-event:hover {
+        background: var(--dark-purple);
+        color: white;
+        transform: translateY(-3px);
+    }
+    .footer-section {
+        background: #0f081a; /* Deep midnight purple */
+        color: rgba(255, 255, 255, 0.7);
+        padding: 100px 0 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Subtle background glow for the footer */
+    .footer-section::before {
+        content: '';
+        position: absolute;
+        top: -150px;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        background: rgba(111, 66, 193, 0.05);
+        border-radius: 50%;
+        filter: blur(100px);
+    }
+
+    .footer-brand .brand-text {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        letter-spacing: -1px;
+        background: linear-gradient(45deg, #fff, rgba(255,255,255,0.7));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .footer-section h5 {
+        color: white;
+        font-weight: 700;
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+    }
+
+    .footer-link {
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+
+    .footer-link:hover {
+        color: var(--primary-purple);
+        transform: translateX(5px);
+    }
+
+    .social-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        color: white;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    .social-icon:hover {
+        background: var(--primary-purple);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    .footer-hr {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    /* Stats Bar Refinements */
+    .stats-bar {
+        background: white;
+        margin-top: -60px; 
+        border-radius: 24px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+        padding: 40px;
+        position: relative;
+        z-index: 100;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .stat-item h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.8rem;
+        color: var(--primary-purple);
+        font-weight: 800;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+    }
+
+    .stat-label {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #6c757d;
+    }
+
+
+    /* =========================
+   MOBILE & SMALL DEVICES
+   ========================= */
+
+/* Phones & very small devices */
+@media (max-width: 576px) {
+
+/* Navbar */
+.navbar-brand-custom {
+    font-size: 1.4rem;
+    gap: 8px;
+}
+
+.navbar .btn {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+}
+
+/* HERO */
+.hero {
+    padding: 120px 0 100px;
+    background-attachment: scroll; /* fixes mobile lag */
+}
+
+.hero h1 {
+    font-size: 2.2rem;
+    line-height: 1.25;
+}
+
+.hero .lead {
+    font-size: 1rem;
+    padding: 0 10px;
+}
+
+.hero .btn {
+    width: 100%;
+}
+
+.hero .d-flex {
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* STATS BAR */
+.stats-bar {
+    margin-top: -30px;
+    padding: 25px 15px;
+    border-radius: 18px;
+}
+
+.stat-item {
+    border: none !important;
+    margin-bottom: 20px;
+}
+
+.stat-item h2 {
+    font-size: 2rem;
+}
+
+/* Section headers */
+h2, h3 {
+    font-size: 1.6rem;
+}
+
+/* Trending filter */
+.dropdown {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.dropdown button {
+    width: 100%;
+}
+
+/* EVENT CARDS */
+.event-card {
+    padding: 15px;
+}
+
+.event-card img {
+    height: 180px;
+}
+
+/* Selling soon cards */
+.card .row {
+    flex-direction: column;
+}
+
+.card img {
+    height: 200px;
+    margin-bottom: 15px;
+}
+
+/* CTA SECTION */
+.cta-image-column {
+    min-height: 280px;
+}
+
+.cta-content-v3 {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.cta-content-v3 h2 {
+    font-size: 2rem;
+}
+
+.feature-item {
+    justify-content: center;
+}
+
+.cta-content-v3 .d-flex {
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* FOOTER */
+.footer-section {
+    padding: 70px 0 30px;
+    text-align: center;
+}
+
+.footer-section .social-icon {
+    margin: 0 auto;
+}
+
+.footer-section .d-flex.gap-2 {
+    justify-content: center;
+}
+}
+
+/* =========================
+TABLETS & MEDIUM DEVICES
+========================= */
+@media (max-width: 992px) {
+
+/* HERO */
+.hero h1 {
+    font-size: 2.8rem;
+}
+
+/* STATS BAR */
+.stat-item h2 {
+    font-size: 2.3rem;
+}
+
+/* CTA */
+.cta-content-v3 {
+    padding: 40px;
+}
+
+/* FOOTER */
+.footer-section {
+    padding-top: 80px;
+}
+}
+
+/* Pointa Navigation Specific Styles */
+    .nav-link-pointa {
+        color: #1a1a2e;
+        font-weight: 700;
+        font-size: 0.95rem;
+        transition: 0.3s;
+        padding: 8px 16px;
+        border-radius: 10px;
+    }
+    .nav-link-pointa:hover {
+        background-color: #f3effb; /* soft-purple */
+        color: #6f42c1;
+    }
+    
+    .btn-pointa-primary {
+        background-color: #6f42c1;
+        color: #ffffff;
+        font-weight: 800;
+        border-radius: 12px;
+        padding: 10px 24px;
+        border: none;
+        transition: 0.3s;
+        box-shadow: 0 4px 12px rgba(111, 66, 193, 0.2);
+    }
+    .btn-pointa-primary:hover {
+        background-color: #5a32a3;
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    .btn-pointa-outline {
+        border: 1.5px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 700;
+        border-radius: 12px;
+        padding: 10px 20px;
+        transition: 0.3s;
+    }
+    .btn-pointa-outline:hover {
+        border-color: #6f42c1;
+        color: #6f42c1;
+        background: transparent;
+    }
+
+    .user-profile-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8fafc;
+        padding: 6px 12px;
+        border-radius: 50px;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Hero Container */
+.discovery-hero-v2 {
+    background: #0f081a; /* Match your footer/navbar dark theme */
+    padding: 120px 0 160px; /* Extra bottom padding for the negative margin */
+    position: relative;
+    overflow: visible; /* Crucial for the negative margin search bar */
+}
+
+/* Glassy glow effect in background */
+.discovery-hero-v2::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(111, 66, 193, 0.15) 0%, transparent 70%);
+}
+
+.hero-badge {
+    background: rgba(255, 255, 255, 0.05);
+    color: #a855f7;
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-bottom: 20px;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.hero-title {
+    font-family: 'Syne', sans-serif; /* High-end event font */
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    color: white;
+    margin-bottom: 15px;
+    letter-spacing: -1px;
+}
+
+.text-gradient {
+    background: linear-gradient(to right, #a855f7, #6f42c1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* The Pointa Search Bar */
+.pointa-search-bar {
+    max-width: 900px;
+    margin: 60px auto -210px; /* The negative margin pulls it down */
+    position: relative;
+    z-index: 100;
+    padding: 0 15px;
+}
+
+.search-inner {
+    background: white;
+    padding: 12px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #f1f5f9;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 0 20px;
+}
+
+.search-item i {
+    color: #6f42c1;
+    font-size: 1.1rem;
+    margin-right: 12px;
+}
+
+.search-item input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 1rem;
+}
+
+.search-divider {
+    width: 1px;
+    height: 40px;
+    background: #e2e8f0;
+}
+
+.btn-search-trigger {
+    background: #6f42c1;
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 18px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
+}
+
+.btn-search-trigger:hover {
+    background: #4b228a;
+    transform: scale(1.02);
+}
+
+/* Mobile Fixes */
+@media (max-width: 768px) {
+    .search-inner {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .search-divider { display: none; }
+    .search-item {
+        width: 100%;
+        padding: 15px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .btn-search-trigger {
+        width: 100%;
+        justify-content: center;
+        margin-top: 15px;
+    }
+    .pointa-search-bar {
+        margin-bottom: -250px;
+    }
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand-custom" href="#">
+                <span style="color: var(--primary-purple); line-height: 0;">
+                    <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_18078_104881)">
+                            <mask id="mask0_18078_104881" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
+                                <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="white" />
+                            </mask>
+                            <g mask="url(#mask0_18078_104881)">
+                                <path d="M25.5 0H8.5C3.80558 0 0 3.80558 0 8.5V25.5C0 30.1944 3.80558 34 8.5 34H25.5C30.1944 34 34 30.1944 34 25.5V8.5C34 3.80558 30.1944 0 25.5 0Z" fill="currentColor" />
+                                <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
+                            </g>
+                        </g>
+                        <defs><clipPath id="clip0_18078_104881"><rect width="34" height="34" fill="white" /></clipPath></defs>
+                    </svg>
+                </span>
+                <span class="brand-text">Pointa</span>
+            </a>
+            <div class="collapse navbar-collapse" id="navPointa">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link px-3" href="{%url 'events_list'%}">Browse Events</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle px-3" href="#" id="catDrop" role="button" data-bs-toggle="dropdown">Categories</a>
+                        <ul class="dropdown-menu border-0 shadow-sm mt-3">
+                            <li><a class="dropdown-item" href="#">Conferences</a></li>
+                            <li><a class="dropdown-item" href="#">Workshops</a></li>
+                            <li><a class="dropdown-item" href="#">Music & Art</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#">Pricing</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <!-- <a href="{%url 'user_login'%}" class="btn text-dark fw-bold px-3">Sign In</a>
+                    <a href="{%url 'create_event'%}" class="btn btn-purple shadow-sm px-4">Create Event</a> -->
+                    {% if user.is_authenticated %}
+
+    {% if user.organizer %}
+        <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">
+            Dashboard
+        </a>
+    {% else %}
+        <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">
+            My Account
+        </a>
+    {% endif %}
+
+    <form method="POST" action="{% url 'logout' %}" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger px-3">
+            Logout
+        </button>
+    </form>
+
+{% else %}
+
+    <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">
+        Sign In
+    </a>
+
+    <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">
+        Create Event
+    </a>
+
+{% endif %}
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="discovery-hero-v2">
+        <div class="container text-center">
+            <div class="hero-badge">Explore what's happening</div>
+            <h1 class="hero-title">Don't miss out on <span class="text-gradient">Life.</span></h1>
+            <p class="hero-subtitle">Find the most exciting conferences, workshops, and concerts near you.</p>
+            
+            <form action="{% url 'events_list' %}" method="GET" class="pointa-search-bar">
+                <div class="search-inner">
+                    <div class="search-item">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" name="q" placeholder="Search event name or category...">
+                    </div>
+                    <div class="search-divider"></div>
+                    <div class="search-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" name="city" placeholder="All Cities">
+                    </div>
+                    <button type="submit" class="btn-search-trigger">
+                        <span>Find Events</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <div class="container" style="margin-top: 120px; padding-bottom: 100px;">
+        <div class="row g-4">
+            
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="filter-card">
+                    <h5 class="filter-title">Filter By</h5>
+                    
+                    <div class="mb-4">
+                        <label class="fw-bold small text-uppercase mb-2 d-block text-muted">Category</label>
+                        <select class="form-select border-0 bg-light rounded-3">
+                            <option>All Categories</option>
+                            <option>Conferences</option>
+                            <option>Music</option>
+                            <option>Tech Workshops</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="fw-bold small text-uppercase mb-2 d-block text-muted">Location</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="loc1">
+                            <label class="form-check-label small" for="loc1">Lagos</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="loc2">
+                            <label class="form-check-label small" for="loc2">Abuja</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="loc3">
+                            <label class="form-check-label small" for="loc3">Port Harcourt</label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-purple w-100 rounded-3 py-2 fw-bold" style="background: var(--p-purple); color: white;">Apply Filters</button>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-800 mb-0" style="font-family: 'Outfit';">Upcoming Events</h4>
+                    <span class="text-muted small fw-bold">{{ events|length }} Events found</span>
+                </div>
+
+                <div class="row g-4">
+                    {% for event in events %}
+                    <div class="col-md-6 col-xl-4">
+                        <div class="event-card">
+                            <div class="card-img-wrapper">
+                                <div class="price-tag">
+                                    {% if event.tickets.all %}
+                                        ₦{{ event.tickets.first.price|floatformat:0 }}
+                                    {% else %}
+                                        Free
+                                    {% endif %}
+                                </div>
+                                {% if event.image %}
+                                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                                {% else %}
+                                    <div class="w-100 h-100 bg-secondary d-flex align-items-center justify-content-center text-white">
+                                        <i class="fa-solid fa-image fa-2x opacity-25"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="p-4">
+                                <span class="category-label">{{ event.category.name }}</span>
+                                <h3 class="event-title">{{ event.title }}</h3>
+                                
+                                <div class="event-meta">
+                                    <i class="fa-solid fa-calendar-check"></i>
+                                    <span>{{ event.date|date:"D, M d, Y" }}</span>
+                                </div>
+                                <div class="event-meta mb-4">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span>{{ event.venue }}, {{ event.city }}</span>
+                                </div>
+
+                                <a href="{% url 'event_detail' event.id %}" class="btn-view">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <i class="fa-solid fa-calendar-xmark fa-4x text-light mb-3"></i>
+                        <h4 class="text-muted">No events found matching your search.</h4>
+                        <a href="{% url 'events_list' %}" class="text-purple fw-bold">Clear all filters</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

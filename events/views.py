@@ -80,21 +80,43 @@ def organizer_signup(request):
     return render(request, "events/org_signup.html", {"form": form})
 
 
-@login_required (login_url='organizer_login')
+@login_required(login_url='organizer_login')
 def org_dashboard(request):
     """
     Organizer dashboard view.
-    Only accessible to logged-in users.
+    Shows stats: total events, total attendees, total revenue, and recent registrations
     """
-    # Get the organizer profile of the logged-in user
     try:
-        org = request.user.organizer  # this works because of the related_name='organizer'
+        org = request.user.organizer
     except Organizer.DoesNotExist:
-        # Optional: handle case where logged-in user is not an organizer
-        org = None
+        return redirect('organizer_login')  # redirect if user is not an organizer
 
-    context = {'organizer': org}
+    # All events by this organizer
+    events = Event.objects.filter(organizer=org)
+
+    # All orders for these events
+    orders = Order.objects.filter(event__in=events).order_by('-created_at')  # latest first
+
+    # Dashboard stats
+    total_events = events.count()
+    total_attendees = orders.count()
+    total_revenue = sum(order.total_amount for order in orders if order.status == 'paid')
+    total_paid_orders = Order.objects.filter(
+        event__in=events,
+        status="paid"
+    ).count()
+
+    context = {
+        'organizer': org,
+        'events': events,
+        'orders': orders,
+        'total_events': total_events,
+        'total_attendees': total_attendees,
+        'total_revenue': total_revenue,
+        'total_paid_orders': total_paid_orders,
+    }
     return render(request, 'events/org_dashboard.html', context)
+
 
 
 def organizer_logout(request):

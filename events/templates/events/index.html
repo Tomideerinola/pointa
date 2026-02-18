@@ -521,14 +521,104 @@ TABLETS & MEDIUM DEVICES
         border-radius: 50px;
         border: 1px solid #e2e8f0;
     }
+    /* footer css  */
 
+    .newsletter-card h5 {
+    color: #fff;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 10px;
+}
+
+.newsletter-form {
+    position: relative;
+    max-width: 400px;
+}
+
+.input-group-custom {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 6px;
+    transition: 0.3s;
+}
+
+.input-group-custom:focus-within {
+    border-color: var(--primary-purple);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.input-group-custom input {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    flex-grow: 1;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.input-group-custom input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.input-group-custom button {
+    background: var(--primary-purple);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 25px;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.input-group-custom button:hover {
+    background: #5a32a3;
+    transform: scale(1.02);
+}
+
+.x-small {
+    font-size: 0.75rem;
+}
+
+@media (max-width: 992px) {
+    .newsletter-card {
+        margin-top: 20px;
+        padding-top: 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+
+/* navbar ham menu   */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background: white;
+        margin-top: 1rem;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        border: 1px solid #eee;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 12px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    
+    .navbar-nav .nav-item:last-child .nav-link {
+        border-bottom: none;
+    }
+}
     </style>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand-custom" href="#">
+            <!-- Brand -->
+            <a class="navbar-brand-custom" href="{% url 'home' %}">
                 <span style="color: var(--primary-purple); line-height: 0;">
                     <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_18078_104881)">
@@ -545,12 +635,19 @@ TABLETS & MEDIUM DEVICES
                 </span>
                 <span class="brand-text">Pointa</span>
             </a>
+    
+            <!-- Hamburger toggle button for mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPointa" aria-controls="navPointa" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <!-- Navbar links -->
             <div class="collapse navbar-collapse" id="navPointa">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link px-3" href="#">Browse Events</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="{% url 'events_list' %}">Browse Events</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle px-3" href="#" id="catDrop" role="button" data-bs-toggle="dropdown">Categories</a>
-                        <ul class="dropdown-menu border-0 shadow-sm mt-3">
+                        <ul class="dropdown-menu border-0 shadow-sm mt-3" aria-labelledby="catDrop">
                             <li><a class="dropdown-item" href="#">Conferences</a></li>
                             <li><a class="dropdown-item" href="#">Workshops</a></li>
                             <li><a class="dropdown-item" href="#">Music & Art</a></li>
@@ -561,44 +658,28 @@ TABLETS & MEDIUM DEVICES
                     <li class="nav-item"><a class="nav-link px-3" href="#">About Us</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#">Pricing</a></li>
                 </ul>
+    
+                <!-- Auth buttons -->
                 <div class="d-flex align-items-center gap-2">
-                    <!-- <a href="{%url 'user_login'%}" class="btn text-dark fw-bold px-3">Sign In</a>
-                    <a href="{%url 'create_event'%}" class="btn btn-purple shadow-sm px-4">Create Event</a> -->
                     {% if user.is_authenticated %}
-
-    {% if user.organizer %}
-        <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">
-            Dashboard
-        </a>
-    {% else %}
-        <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">
-            My Account
-        </a>
-    {% endif %}
-
-    <form method="POST" action="{% url 'logout' %}" class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-danger px-3">
-            Logout
-        </button>
-    </form>
-
-{% else %}
-
-    <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">
-        Sign In
-    </a>
-
-    <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">
-        Create Event
-    </a>
-
-{% endif %}
-
+                        {% if user.organizer %}
+                            <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">Dashboard</a>
+                        {% else %}
+                            <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">Hello, {{user.first_name|capfirst}}! 👋</a>
+                        {% endif %}
+                        <form method="POST" action="{% url 'logout' %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger px-3">Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">Sign In</a>
+                        <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">Create Event</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </nav>
+    
 
     <section class="hero">
         <div class="container text-center hero-content">
@@ -616,11 +697,11 @@ TABLETS & MEDIUM DEVICES
             </h1>
             
             <p class="lead mb-5 mx-auto" style="max-width: 750px;">
-                Whether it's a neighborhood workshop, a sold-out concert, or a global tech summit—Pointa is where your next great memory begins.
+                Whether it's a neighborhood workshop, a sold-out concert, or a global tech summit, Pointa is where your next great memory begins.
             </p>
             
             <div class="d-flex justify-content-center gap-3">
-                <button class="btn btn-purple btn-lg shadow">Explore Events</button>
+                <a href="{%url 'events_list'%}" class="btn btn-purple btn-lg shadow">Explore Events</a>
                 <button class="btn btn-light btn-lg" style="border-radius: 12px; font-weight: 700;">Start Hosting</button>
             </div>
         </div>
@@ -905,7 +986,7 @@ TABLETS & MEDIUM DEVICES
     <footer class="footer-section">
         <div class="container">
             <div class="row g-4">
-                <div class="col-lg-4 mb-4">
+                <div class="col-lg-3 mb-4">
                     <a class="footer-brand d-flex align-items-center gap-2 mb-4 text-decoration-none" href="#">
                         <span style="color: var(--primary-purple); line-height: 0;">
                             <svg width="35" height="35" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -918,19 +999,17 @@ TABLETS & MEDIUM DEVICES
                                         <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />
                                     </g>
                                 </g>
-                                <defs><clipPath id="clip0_footer"><rect width="34" height="34" fill="white" /></clipPath></defs>
                             </svg>
                         </span>
                         <span class="brand-text">Pointa</span>
                     </a>
-                    <p class="pe-lg-5">
-                        Connecting Nigeria through unforgettable moments. From Lagos raves to Abuja summits, we make event discovery seamless.
+                    <p class="pe-lg-4 small">
+                        Connecting Nigeria through unforgettable moments. From Lagos raves to Abuja summits.
                     </p>
                     <div class="d-flex gap-2 mt-4">
                         <a href="#" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
                         <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
                         <a href="#" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
                     </div>
                 </div>
     
@@ -940,7 +1019,6 @@ TABLETS & MEDIUM DEVICES
                         <a href="#" class="footer-link">Concerts & Raves</a>
                         <a href="#" class="footer-link">Owambe Hub</a>
                         <a href="#" class="footer-link">Tech Summits</a>
-                        <a href="#" class="footer-link">Religious Events</a>
                     </div>
                 </div>
     
@@ -949,18 +1027,22 @@ TABLETS & MEDIUM DEVICES
                     <div class="d-flex flex-column">
                         <a href="#" class="footer-link">How it works</a>
                         <a href="#" class="footer-link">Pricing</a>
-                        <a href="#" class="footer-link">Organizer App</a>
                         <a href="#" class="footer-link">Help Center</a>
                     </div>
                 </div>
     
-                <div class="col-6 col-md-4 col-lg-2">
-                    <h5>Company</h5>
-                    <div class="d-flex flex-column">
-                        <a href="#" class="footer-link">About Us</a>
-                        <a href="#" class="footer-link">Careers</a>
-                        <a href="#" class="footer-link">Privacy Policy</a>
-                        <a href="#" class="footer-link">Terms of Service</a>
+                <div class="col-lg-5 ps-lg-5">
+                    <div class="newsletter-card">
+                        <h5>Don't miss the vibe</h5>
+                        <p class="small opacity-75 mb-4">Get notified about the hottest events in your city before they sell out.</p>
+                        
+                        <form action="#" method="POST" class="newsletter-form">
+                            <div class="input-group-custom">
+                                <input type="email" placeholder="Your email address" required>
+                                <button type="submit">Join</button>
+                            </div>
+                        </form>
+                        <p class="x-small mt-3 opacity-50">Join 10k+ event seekers. No spam, ever.</p>
                     </div>
                 </div>
             </div>
