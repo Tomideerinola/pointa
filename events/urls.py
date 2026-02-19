@@ -20,4 +20,6 @@ urlpatterns = [
     path("payment-success/", views.payment_success, name="payment_success"),
     path("payment-failed/", views.payment_failed, name="payment_failed"),
     path('org/my_events/', views.my_events, name='my_events'),
+    path('edit/<int:pk>/', views.edit_event, name='edit_event'),
+    path('delete/<int:pk>/',views.delete_event,name='delete_event'),
 ]

@@ -3,6 +3,7 @@ import requests
 from django.conf import settings
 from django.utils import timezone
 from django.urls import reverse
+from django.db.models import Sum
 from django.shortcuts import render, redirect , get_object_or_404
 from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet
 from django.contrib.auth import login as auth_login, authenticate, logout
@@ -381,5 +382,83 @@ def my_events(request):
     
         events = Event.objects.filter(organizer=org)
 
+
+        for event in events:
+
+            # ✅ Total tickets available
+            total_tickets = Ticket.objects.filter(
+                event=event
+            ).aggregate(total=Sum('quantity_available'))
+
+            event.total_tickets = total_tickets['total'] or 0
+
+
+            # ✅ Tickets sold
+            sold = OrderItem.objects.filter(
+                order__event=event,
+                order__status="paid"
+            ).aggregate(total=Sum('quantity'))
+
+            event.tickets_sold = sold['total'] or 0
+
+
+            # ✅ Percentage
+            if event.total_tickets > 0:
+                event.sold_percentage = int(
+                    (event.tickets_sold / event.total_tickets) * 100
+                )
+            else:
+                event.sold_percentage = 0
+
         return render(request, 'events/my_events.html', {"events":events, "now": timezone.now()})
 
+
+
+
+def edit_event(request, pk):
+    try:
+        org = request.user.organizer
+    except Organizer.DoesNotExist:
+        return redirect('organizer_login')
+
+    event = get_object_or_404(Event, pk=pk, organizer=org)
+
+    if request.method == "POST":
+        form = EventForm(request.POST, request.FILES, instance=event)
+        ticket_formset = TicketFormSet(request.POST, instance=event)
+
+        if form.is_valid() and ticket_formset.is_valid():
+            form.save()
+            ticket_formset.save()
+            messages.success(request, "Event updated successfully.")
+            return redirect("my_events")
+
+    else:
+        form = EventForm(instance=event)
+        ticket_formset = TicketFormSet(instance=event)
+
+    return render(request, "events/edit_event.html", {
+        "form": form,
+        "ticket_formset": ticket_formset
+    })
+
+
+def delete_event(request, pk):
+
+    try:
+        org = request.user.organizer
+    except Organizer.DoesNotExist:
+        return redirect('organizer_login')
+
+    event = get_object_or_404(
+        Event,
+        pk=pk,
+        organizer=org
+    )
+
+    if request.method == "POST":
+        event.delete()
+        messages.success(request, "Event deleted successfully.")
+        return redirect('my_events')
+
+    return redirect('my_events')

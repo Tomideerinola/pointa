@@ -29,6 +29,14 @@
 {%block content%}
 <div class="custom-table shadow-sm border-0 bg-white rounded-4 overflow-hidden">
     <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
         <h5 class="fw-800 mb-0">Managed Events</h5>
         <a href="{% url 'create_event' %}" class="btn btn-purple btn-sm px-3 rounded-pill">
             <i class="fa-solid fa-plus me-1"></i> New Event
@@ -41,7 +49,7 @@
                 <tr>
                     <th class="ps-4 py-3 border-0 text-uppercase small fw-800 text-muted">Event Details</th>
                     <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Date & Time</th>
-                    <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Tickets</th>
+                    <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Tickets Sold</th>
                     <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Status</th>
                     <th class="pe-4 py-3 border-0 text-end text-uppercase small fw-800 text-muted">Actions</th>
                 </tr>
@@ -52,56 +60,90 @@
                     <td class="ps-4">
                         <div class="d-flex align-items-center gap-3">
                             {% if event.image %}
-                            <img src="{{ event.image.url }}" class="rounded-3 shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+                                <img src="{{ event.image.url }}" class="rounded-3 shadow-sm" style="width:50px;height:50px;object-fit:cover;">
                             {% else %}
-                            <div class="rounded-3 bg-light d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
-                                <i class="fa-solid fa-image"></i>
-                            </div>
+                                <div class="rounded-3 bg-light d-flex align-items-center justify-content-center text-muted" style="width:50px;height:50px;">
+                                    <i class="fa-solid fa-image"></i>
+                                </div>
                             {% endif %}
                             
                             <div>
                                 <div class="fw-800 text-dark mb-0">{{ event.title }}</div>
-                                <div class="small text-muted"><i class="fa-solid fa-location-dot me-1"></i> {{ event.location }}</div>
+                                <div class="small text-muted">
+                                    <i class="fa-solid fa-location-dot me-1"></i> {{ event.venue }}
+                                </div>
                             </div>
                         </div>
                     </td>
+
                     <td>
-                        <div class="fw-600 text-dark small">{{ event.date|date:"D, M d, Y" }}</div>
-                        <div class="text-muted extra-small">{{ event.time|time:"h:i A" }}</div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-column" style="min-width: 120px;">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="extra-small fw-bold">Sold</span>
-                                <span class="extra-small text-muted">{{ event.tickets_sold }} / {{ event.capacity }}</span>
-                            </div>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar bg-purple" style="width: 50%;"></div>
-                            </div>
+                        <div class="fw-600 text-dark small">
+                            {{ event.date|date:"D, M d, Y" }}
                         </div>
-                    </td>
-                    <td>
-                        {% if event.is_active %}
-                        <span class="badge bg-soft-success text-success border-0 px-3 py-2 rounded-pill small">
-                             Live
-                        </span>
-                        {% else %}
-                        <span class="badge bg-soft-secondary text-muted border-0 px-3 py-2 rounded-pill small">
-                             Draft
-                        </span>
+                        {% if event.time %}
+                        <div class="text-muted extra-small">
+                            {{ event.time|time:"h:i A" }}
+                        </div>
                         {% endif %}
                     </td>
+
+                    <td>
+                        <div class="fw-bold">
+                            {{ event.tickets_sold }} / {{ event.total_tickets }}
+                        </div>
+                    
+                        <div class="progress mt-1" style="height:6px;">
+                            {% if event.total_tickets > 0 %}
+                                <div class="progress-bar bg-purple"
+                                     style="width: {{ event.tickets_sold|floatformat:0|add:'0'|divisibleby:1 }}%;">
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td>
+                        {% if event.date > now %}
+                            <span class="badge bg-soft-success text-success border-0 px-3 py-2 rounded-pill small">
+                                Upcoming
+                            </span>
+                        {% else %}
+                            <span class="badge bg-soft-secondary text-muted border-0 px-3 py-2 rounded-pill small">
+                                Past
+                            </span>
+                        {% endif %}
+                    </td>
+
                     <td class="pe-4 text-end">
                         <div class="dropdown">
-                            <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-toggle="dropdown" style="width: 32px; height: 32px; padding: 0;">
+                            <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-toggle="dropdown" style="width:32px;height:32px;padding:0;">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                                <li><a class="dropdown-item small fw-600" href="#"><i class="fa-solid fa-eye me-2 text-muted"></i> View Page</a></li>
-                                <li><a class="dropdown-item small fw-600" href="#"><i class="fa-solid fa-pen-to-square me-2 text-muted"></i> Edit Event</a></li>
-                                <li><a class="dropdown-item small fw-600" href="#"><i class="fa-solid fa-chart-line me-2 text-muted"></i> Analytics</a></li>
+                                <li>
+                                    <a class="dropdown-item small fw-600" href="#">
+                                        <i class="fa-solid fa-eye me-2 text-muted"></i> View Page
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item small fw-600"
+                                    href="{% url 'edit_event' event.pk %}">
+                                     <i class="fa-solid fa-pen-to-square me-2 text-muted"></i>
+                                     Edit Event
+                                 </a>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item small fw-600 text-danger" href="#"><i class="fa-solid fa-trash me-2"></i> Delete</a></li>
+                                <li>
+                                    <form method="POST"
+                                    action="{% url 'delete_event' event.pk %}">
+                                  {% csrf_token %}
+                                  <button type="submit"
+                                          class="dropdown-item small fw-600 text-danger"
+                                          style="border:none;background:none;width:100%;text-align:left;">
+                                      <i class="fa-solid fa-trash me-2"></i>
+                                      Delete
+                                  </button>
+                              </form>
+                                </li>
                             </ul>
                         </div>
                     </td>
@@ -112,7 +154,9 @@
                         <div class="text-muted">
                             <i class="fa-solid fa-calendar-xmark fa-3x mb-3 opacity-25"></i>
                             <p class="fw-700">No events created yet.</p>
-                            <a href="{% url 'create_event' %}" class="btn btn-purple btn-sm rounded-pill mt-2">Create Your First Event</a>
+                            <a href="{% url 'create_event' %}" class="btn btn-purple btn-sm rounded-pill mt-2">
+                                Create Your First Event
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -121,4 +165,5 @@
         </table>
     </div>
 </div>
+
 {%endblock content%}
