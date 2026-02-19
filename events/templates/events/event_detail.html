@@ -452,7 +452,7 @@
             <!-- Collapsible content -->
             <div class="collapse navbar-collapse" id="navPointa">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link px-3" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="{%url 'home'%}">Home</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="{% url 'events_list' %}">Explore Events</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-2">
@@ -505,7 +505,7 @@
             
                 <div class="mb-5">
                     <a href="#" class="organizer-chip mb-3">
-                        <i class="fa-solid fa-shield-check"></i> Verified Organizer: {{ event.organizer.organization_name }}
+                        <i class="fas fa-shield-alt"></i> Verified Organizer: {{ event.organizer.organization_name }}
                     </a>
                     <h3 class="section-title mt-4">Event Description</h3>
                     <div class="description-text">

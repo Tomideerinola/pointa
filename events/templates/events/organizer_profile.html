@@ -1,0 +1,187 @@
+{% extends 'events/org_dashboard.html' %}
+
+{% block style %}
+<style>
+    .profile-card {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+    }
+
+    .form-section-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        color: #1e293b;
+        letter-spacing: -0.5px;
+    }
+
+    .form-label {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #64748b;
+        text-uppercase;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background-color: #f8fafc;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .form-control-custom:focus {
+        background-color: #fff;
+        border-color: #6f42c1;
+        box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.1);
+        outline: none;
+    }
+
+    .save-profile-btn {
+        background: #6f42c1;
+        color: white;
+        border: none;
+        padding: 14px 35px;
+        border-radius: 14px;
+        font-weight: 800;
+        transition: all 0.3s ease;
+    }
+
+    .save-profile-btn:hover {
+        background: #5a32a3;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(111, 66, 193, 0.2);
+    }
+
+    .profile-sidebar-info {
+        background: linear-gradient(135deg, #6f42c1 0%, #a855f7 100%);
+        border-radius: 20px;
+        color: white;
+        padding: 30px;
+    }
+
+    .form-control-custom:focus {
+    border-color: #6f42c1 !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.1);
+    outline: none;
+}
+
+.save-profile-btn:hover {
+    background: #5a32a3 !important;
+    transform: translateY(-2px);
+}
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row g-4">
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+        <div class="col-lg-4">
+            <div class="profile-sidebar-info shadow-sm h-100 d-flex flex-column justify-content-between p-4" 
+                 style="background: linear-gradient(135deg, #6f42c1 0%, #a855f7 100%); border-radius: 20px; color: white; min-height: 400px;">
+                <div>
+                    <div class="rounded-4 bg-white d-flex align-items-center justify-content-center mb-4 shadow-sm" style="width: 70px; height: 70px;">
+                        <i class="fa-solid fa-building-user" style="font-size: 2rem; color: #6f42c1;"></i>
+                    </div>
+                    <h3 class="fw-800 mb-2">{{ org_form.instance.organization_name|default:"Your Organization" }}</h3>
+                    <p class="opacity-75 small">Manage your organization's public identity. This information will be visible on your event pages.</p>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span class="small fw-bold">Joined {{ org_form.instance.joined_at|date:"M Y" }}</span>
+                    </div>
+                    {% if org_form.instance.verified %}
+                    <div class="badge bg-white text-dark rounded-pill px-3 py-2 small fw-bold">
+                        <i class="fa-solid fa-shield-check text-success me-1"></i> Verified Account
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="profile-card shadow-sm p-4 p-md-5 h-100 bg-white" style="border-radius: 20px; border: 1px solid #f1f5f9;">
+                <h4 class="form-section-title mb-4 fw-800" style="font-family: 'Outfit';">Edit Profile</h4>
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label fw-700 small text-muted text-uppercase">Organization Name</label>
+                            {% if org_form.organization_name.field.widget.input_type %}
+                                {# This manually injects the class if you didn't do it in forms.py #}
+                                <input type="text" name="organization_name" 
+                                       class="form-control-custom w-100 p-3 border rounded-3" 
+                                       value="{{ org_form.organization_name.value|default:'' }}" 
+                                       style="background: #f8fafc; border: 1px solid #e2e8f0; font-weight: 600;">
+                            {% else %}
+                                {{ org_form.organization_name }}
+                            {% endif %}
+                            
+                            {% if org_form.organization_name.errors %}
+                                <div class="text-danger small mt-1">{{ org_form.organization_name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-700 small text-muted text-uppercase">Public Email</label>
+                            <input type="email" name="email" 
+                                   class="form-control-custom w-100 p-3 border rounded-3" 
+                                   value="{{ user_form.email.value|default:'' }}"
+                                   style="background: #f8fafc; border: 1px solid #e2e8f0; font-weight: 600;">
+                            {% if user_form.email.errors %}
+                                <div class="text-danger small mt-1">{{ user_form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-700 small text-muted text-uppercase">Phone Number</label>
+                            <input type="text" name="phone" 
+                                   class="form-control-custom w-100 p-3 border rounded-3" 
+                                   value="{{ org_form.phone.value|default:'' }}"
+                                   style="background: #f8fafc; border: 1px solid #e2e8f0; font-weight: 600;">
+                            {% if org_form.phone.errors %}
+                                <div class="text-danger small mt-1">{{ org_form.phone.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-700 small text-muted text-uppercase">Organization Bio</label>
+                            <textarea name="bio" rows="4" 
+                                      class="form-control-custom w-100 p-3 border rounded-3" 
+                                      style="background: #f8fafc; border: 1px solid #e2e8f0; font-weight: 600;">{{ org_form.bio.value|default:'' }}</textarea>
+                            {% if org_form.bio.errors %}
+                                <div class="text-danger small mt-1">{{ org_form.bio.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 text-end mt-4">
+                            <button type="submit" class="save-profile-btn shadow-sm px-5 py-3 border-0 text-white fw-800" 
+                                    style="background: #6f42c1; border-radius: 12px; transition: 0.3s;">
+                                Update Profile
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

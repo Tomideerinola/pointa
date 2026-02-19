@@ -1,0 +1,70 @@
+{% extends 'events/org_dashboard.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Stats -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="p-4 bg-white shadow-sm rounded-4">
+                <p class="text-muted small fw-bold mb-1 text-uppercase">Active Ticket Tiers</p>
+                <h2 class="fw-800 mb-0">{{ total_tiers }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="p-4 bg-white shadow-sm rounded-4">
+                <p class="text-muted small fw-bold mb-1 text-uppercase">Total Available Tickets</p>
+                <h2 class="fw-800 mb-0">{{ total_stock|intcomma }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="p-4 border-bottom bg-white">
+            <h5 class="fw-800 mb-0">Ticket Inventory</h5>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Event</th>
+                        <th>Tier Name</th>
+                        <th>Price</th>
+                        <th>Available</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                        {% for ticket in event.tickets.all %}
+                        <tr>
+                            <td class="ps-4 fw-700">{{ event.title }}</td>
+                            <td>{{ ticket.name }}</td>
+                            <td>₦{{ ticket.price|intcomma }}</td>
+                            <td>{{ ticket.quantity_available }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                No ticket tiers created for this event.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <h6 class="fw-800 text-muted">No events yet</h6>
+                            <p class="small text-muted">Create an event to add ticket tiers.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

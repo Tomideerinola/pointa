@@ -5,11 +5,11 @@ from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Sum
 from django.shortcuts import render, redirect , get_object_or_404
-from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet
+from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet,OrganizerForm,UserForm
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem
+from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem 
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -135,37 +135,78 @@ def dashboard(request):
 
 
 
+# @login_required(login_url='organizer_login')
+# def create_event(request):
+
+#     organizer = request.user.organizer
+
+#     if request.method == "POST":
+#         form = EventForm(request.POST, request.FILES)
+#         ticket_formset = TicketFormSet(request.POST)
+
+#         if form.is_valid() and ticket_formset.is_valid():
+
+#             event = form.save(commit=False)
+#             event.organizer = organizer
+#             event.save()
+
+#             tickets = ticket_formset.save(commit=False)
+#             for ticket in tickets:
+#                 ticket.event = event
+#                 ticket.save()
+#             messages.success(request, f'Success! "{event.title}" has been created.')
+
+#             return redirect("org_dashboard")
+
+#     else:
+#         form = EventForm()
+#         ticket_formset = TicketFormSet()
+
+#     return render(request, "events/create_event.html", {
+#         "form": form,
+#         "ticket_formset": ticket_formset
+#     })
+
+
 @login_required(login_url='organizer_login')
 def create_event(request):
-
-    organizer = request.user.organizer
+    try:
+        organizer = request.user.organizer
+    except Organizer.DoesNotExist:
+        messages.error(request, "You must be an organizer to create events.")
+        return redirect('org_dashboard')
 
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES)
         ticket_formset = TicketFormSet(request.POST)
 
         if form.is_valid() and ticket_formset.is_valid():
-
+            # Save the event
             event = form.save(commit=False)
             event.organizer = organizer
             event.save()
 
-            tickets = ticket_formset.save(commit=False)
-            for ticket in tickets:
-                ticket.event = event
-                ticket.save()
-            messages.success(request, f'Success! "{event.title}" has been created.')
+            # Attach formset to event and save
+            ticket_formset.instance = event
+            ticket_formset.save()
 
-            return redirect("org_dashboard")
+            messages.success(request, f'Success! "{event.title}" has been created.')
+            return redirect("my_events")
+
+        else:
+            # DEBUG: print errors to console
+            print("Event Form Errors:", form.errors)            # Shows which fields are failing in the event form
+            print("Ticket Formset Errors:", ticket_formset.errors)  # Shows which tickets are invalid
 
     else:
         form = EventForm()
-        ticket_formset = TicketFormSet()
+        ticket_formset = TicketFormSet(queryset=Ticket.objects.none())
 
     return render(request, "events/create_event.html", {
         "form": form,
         "ticket_formset": ticket_formset
     })
+
 
 
 def organizer_login(request):
@@ -462,3 +503,63 @@ def delete_event(request, pk):
         return redirect('my_events')
 
     return redirect('my_events')
+
+@login_required(login_url='organizer_login')
+def organizer_profile(request):
+    try:
+        org = request.user.organizer  # Try to get the organizer record
+    except Organizer.DoesNotExist:
+        messages.error(request, "You are not registered as an organizer.")
+        return redirect('org_dashboard')  # Or wherever makes sense
+
+    if request.method == "POST":
+        org_form = OrganizerForm(request.POST, instance=org)
+        user_form = UserForm(request.POST, instance=request.user)
+
+        if org_form.is_valid() and user_form.is_valid():
+            org_form.save()
+            user_form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('organizer_profile')
+    else:
+        org_form = OrganizerForm(instance=org)
+        user_form = UserForm(instance=request.user)
+
+    return render(request, 'events/organizer_profile.html', {
+        'org_form': org_form,
+        'user_form': user_form
+    })
+
+@login_required(login_url='organizer_login')
+def organizer_tickets(request):
+    try:
+        organizer = request.user.organizer
+    except Organizer.DoesNotExist:
+        return redirect('organizer_login')
+
+    events = Event.objects.filter(
+        organizer=organizer
+    ).prefetch_related('tickets')  # ← use your related_name here
+
+    total_tiers = 0
+    total_stock = 0
+
+    for event in events:
+        tiers = event.tickets.all()  # ← use related_name
+        total_tiers += tiers.count()
+        total_stock += sum(t.quantity_available for t in tiers)
+
+    context = {
+        "events": events,
+        "total_tiers": total_tiers,
+        "total_stock": total_stock,
+    }
+
+    return render(request, "events/organizer_tickets.html", context)
+
+
+
+
+def payout(request):
+    return render(request,'events/payouts.html')
+

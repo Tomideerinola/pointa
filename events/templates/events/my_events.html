@@ -24,6 +24,62 @@
         border-radius: 10px;
         overflow: hidden;
     }
+
+    /* Styling for visible action buttons */
+    .btn-action-view, .btn-action-edit, .btn-action-delete {
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+    }
+
+    /* View Button: Light/Neutral */
+    .btn-action-view {
+        background-color: #f8fafc;
+        color: #64748b;
+        border-color: #e2e8f0;
+    }
+    .btn-action-view:hover {
+        background-color: #f1f5f9;
+        color: #1e293b;
+    }
+
+    /* Edit Button: Signature Purple */
+    .btn-action-edit {
+        background-color: #6f42c1;
+        color: white;
+    }
+    .btn-action-edit:hover {
+        background-color: #5a32a3;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Delete Button: Subtle Danger */
+    .btn-action-delete {
+        background-color: transparent;
+        color: #ef4444;
+        border-color: #fee2e2;
+    }
+    .btn-action-delete:hover {
+        background-color: #ef4444;
+        color: white;
+        border-color: #ef4444;
+    }
+
+    /* Optional: On smaller screens, hide the text to save space */
+    @media (max-width: 1200px) {
+        .btn-action-view, .btn-action-edit, .btn-action-delete {
+            width: 36px;
+            padding: 0;
+        }
+    }
 </style>
 {% endblock style %}
 {%block content%}
@@ -51,7 +107,7 @@
                     <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Date & Time</th>
                     <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Tickets Sold</th>
                     <th class="py-3 border-0 text-uppercase small fw-800 text-muted">Status</th>
-                    <th class="pe-4 py-3 border-0 text-end text-uppercase small fw-800 text-muted">Actions</th>
+                    <th class="pe-4 py-3 border-0 text-end text-uppercase small fw-800 text-muted text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,38 +169,29 @@
                         {% endif %}
                     </td>
 
-                    <td class="pe-4 text-end">
-                        <div class="dropdown">
-                            <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-toggle="dropdown" style="width:32px;height:32px;padding:0;">
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                                <li>
-                                    <a class="dropdown-item small fw-600" href="#">
-                                        <i class="fa-solid fa-eye me-2 text-muted"></i> View Page
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item small fw-600"
-                                    href="{% url 'edit_event' event.pk %}">
-                                     <i class="fa-solid fa-pen-to-square me-2 text-muted"></i>
-                                     Edit Event
-                                 </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="POST"
-                                    action="{% url 'delete_event' event.pk %}">
-                                  {% csrf_token %}
-                                  <button type="submit"
-                                          class="dropdown-item small fw-600 text-danger"
-                                          style="border:none;background:none;width:100%;text-align:left;">
-                                      <i class="fa-solid fa-trash me-2"></i>
-                                      Delete
-                                  </button>
-                              </form>
-                                </li>
-                            </ul>
+                    <td class="pe-4 text-end text-center">
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                            <a href="{% url 'event_detail' event.pk %}" 
+                               class="btn btn-action-view shadow-sm" 
+                               target="_blank" 
+                               title="View Live Page">
+                                <i class="fa-solid fa-eye"></i>
+                                <span class="d-none d-xl-inline ms-1">View</span>
+                            </a>
+                    
+                            <a href="{% url 'edit_event' event.pk %}" 
+                               class="btn btn-action-edit shadow-sm" 
+                               title="Edit Event">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span class="d-none d-xl-inline ms-1">Edit</span>
+                            </a>
+                    
+                            <form method="POST" action="{% url 'delete_event' event.pk %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-action-delete shadow-sm" title="Delete Event">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>

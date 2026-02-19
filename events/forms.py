@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from datetime import datetime, timedelta
 
 
 class UserRegisterForm(UserCreationForm):
@@ -398,3 +399,21 @@ TicketFormSet = inlineformset_factory(
     extra=1,          # show at least 1 empty ticket form
     can_delete=True
 )
+
+
+class OrganizerForm(forms.ModelForm):
+
+    class Meta:
+        model = Organizer
+        fields = [
+            "organization_name",
+            "email",
+            "phone",
+            "bio",
+        ]
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["email"]  # This is the login email

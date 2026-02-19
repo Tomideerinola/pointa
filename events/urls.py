@@ -22,4 +22,7 @@ urlpatterns = [
     path('org/my_events/', views.my_events, name='my_events'),
     path('edit/<int:pk>/', views.edit_event, name='edit_event'),
     path('delete/<int:pk>/',views.delete_event,name='delete_event'),
+    path("org/profile/",views.organizer_profile,name="organizer_profile"),
+    path('organizer/tickets/', views.organizer_tickets, name='organizer_tickets'),
+    path('org/payouts/', views.payout, name='payout')
 ]
