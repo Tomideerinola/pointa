@@ -1,0 +1,37 @@
+{% extends "events/user_dashboard.html" %}
+
+{% block content %}
+
+<h2>Welcome, {{ user.username }}</h2>
+
+<h3>Quick Stats</h3>
+<p>Saved Events: {{ saved_count }}</p>
+
+<hr>
+
+<h3>Upcoming Events</h3>
+
+{% for event in upcoming_events %}
+    <div>
+        <h4>{{ event.title }}</h4>
+        <p>{{ event.date }}</p>
+        <p>{{ event.location }}</p>
+    </div>
+{% empty %}
+    <p>No upcoming events.</p>
+{% endfor %}
+
+<hr>
+
+<h3>Past Events</h3>
+
+{% for event in past_events %}
+    <div>
+        <h4>{{ event.title }}</h4>
+        <p>{{ event.date }}</p>
+    </div>
+{% empty %}
+    <p>No past events.</p>
+{% endfor %}
+
+{% endblock %}

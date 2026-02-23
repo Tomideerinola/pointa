@@ -310,3 +310,29 @@ class Attendee(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.event.title}"
+
+
+
+class SavedEvent(models.Model):
+
+    # The user who saved the event
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE  # If user deletes account, saved events delete too
+    )
+
+    # The event that was saved
+    event = models.ForeignKey(
+        'Event',   # We use string reference to avoid circular import
+        on_delete=models.CASCADE
+    )
+
+    # When the event was saved
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Prevent a user from saving the same event twice
+        unique_together = ('user', 'event')
+
+    def __str__(self):
+        return f"{self.user.username} saved {self.event.title}"

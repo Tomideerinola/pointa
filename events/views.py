@@ -9,7 +9,7 @@ from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, Event
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem 
+from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem, SavedEvent
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -128,10 +128,44 @@ def organizer_logout(request):
 
 
 # user dashboard view 
+@login_required
 def dashboard(request):
+
+    # Get current logged in user
     user = request.user
-    context = {"user":user}
-    return render(request, 'events/user_dashboard.html', context)
+
+    # Get current time (used for filtering past/upcoming events)
+    now = timezone.now()
+
+    # -----------------------------
+    # Upcoming Events (based on date)
+    # -----------------------------
+    upcoming_events = Event.objects.filter(
+        date__gte=now  # Event date greater than or equal to now
+    ).order_by('date')[:3]  # Show only 3 on dashboard
+
+    # -----------------------------
+    # Past Events
+    # -----------------------------
+    past_events = Event.objects.filter(
+        date__lt=now
+    ).order_by('-date')[:3]
+
+    # -----------------------------
+    # Saved Events Count
+    # -----------------------------
+    saved_count = SavedEvent.objects.filter(
+        user=user
+    ).count()
+
+    context = {
+        "user": user,
+        "upcoming_events": upcoming_events,
+        "past_events": past_events,
+        "saved_count": saved_count,
+    }
+
+    return render(request, 'events/dashboard_home.html', context)
 
 
 
@@ -563,3 +597,69 @@ def organizer_tickets(request):
 def payout(request):
     return render(request,'events/payouts.html')
 
+
+
+@login_required
+def upcoming_events(request):
+
+    now = timezone.now()
+
+    events = Event.objects.filter(
+        date__gte=now
+    ).order_by('date')
+
+    return render(request, 'events/upcoming_events.html', {
+        "events": events
+    })
+
+
+@login_required
+def my_tickets(request):
+    """
+    Shows all PAID ticket orders for the logged-in user
+    """
+
+    # Get all paid orders for this user
+    # select_related("event") → Optimizes query by joining Event table
+    # prefetch_related("items__ticket") → Loads ticket data efficiently
+    orders = (
+        Order.objects
+        .filter(user=request.user, status="paid")
+        .select_related("event")
+        .prefetch_related("items__ticket")
+        .order_by("-created_at")
+    )
+
+    context = {
+        "orders": orders,
+        "today": timezone.now().date(),  # Used to check past/upcoming
+    }
+
+    return render(request, "events/my_tickets.html", context)
+
+@login_required
+def past_events(request):
+
+    now = timezone.now()
+
+    events = Event.objects.filter(
+        date__lt=now
+    ).order_by('-date')
+
+    return render(request, 'events/past_events.html', {
+        "events": events
+    })
+
+
+@login_required
+def saved_events(request):
+
+    user = request.user
+
+    saved = SavedEvent.objects.filter(
+        user=user
+    ).select_related('event')
+
+    return render(request, 'events/saved_events.html', {
+        "saved_events": saved
+    })

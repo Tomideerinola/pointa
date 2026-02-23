@@ -1,0 +1,106 @@
+{% extends "events/user_dashboard.html" %}
+{% block content %}
+
+<div class="container py-4">
+
+    <h2 class="fw-bold mb-4">🎟 My Tickets</h2>
+
+    {% if orders %}
+
+        {% for order in orders %}
+
+        <div class="card shadow-sm mb-4 border-0" style="border-radius:16px;">
+
+            <div class="card-body">
+
+                <!-- EVENT HEADER -->
+                <div class="d-flex justify-content-between align-items-start mb-3">
+
+                    <div>
+                        <h5 class="fw-bold mb-1">
+                            {{ order.event.title }}
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            📍 {{ order.event.location }}
+                        </p>
+
+                        <small class="text-muted">
+                            {{ order.event.date }}
+                        </small>
+                    </div>
+
+                    <span class="badge bg-success px-3 py-2">
+                        PAID
+                    </span>
+
+                </div>
+
+                <hr>
+
+                <!-- TICKET BREAKDOWN -->
+                {% for item in order.items.all %}
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <div>
+                            <strong>{{ item.ticket.name }}</strong>
+                            <span class="text-muted">
+                                x {{ item.quantity }}
+                            </span>
+                        </div>
+
+                        <div>
+                            ₦{{ item.ticket.price }}
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+                <hr>
+
+                <!-- ORDER FOOTER -->
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <small class="text-muted">
+                            Reference: {{ order.reference }}
+                        </small>
+                    </div>
+
+                    <div class="fw-bold">
+                        Total: ₦{{ order.total_amount }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <!-- EMPTY STATE -->
+        <div class="text-center py-5">
+
+            <h5 class="fw-bold mb-3">
+                You haven’t purchased any tickets yet.
+            </h5>
+
+            <a href="{% url 'event_list' %}" 
+               class="btn btn-dark px-4 py-2"
+               style="border-radius:12px;">
+
+               Browse Events
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
