@@ -1,0 +1,202 @@
+{% extends 'events/user_dashboard.html' %}
+{% load humanize %}
+
+{% block style %}
+<style>
+    /* Wishlist Card Styling */
+    .wishlist-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid #f1f5f9;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        position: relative;
+    }
+
+    .wishlist-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    }
+
+    .wishlist-img-wrapper {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .wishlist-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .wishlist-card:hover .wishlist-img {
+        transform: scale(1.1);
+    }
+
+    /* Floating Remove Button */
+    .remove-wishlist {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 35px;
+        height: 35px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(4px);
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ef4444;
+        transition: 0.3s;
+        z-index: 10;
+    }
+
+    .remove-wishlist:hover {
+        background: #ef4444;
+        color: white;
+    }
+
+    .event-category-tag {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        background: #6d28d9;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .wishlist-body {
+        padding: 20px;
+    }
+
+    .wishlist-title {
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: #1e293b;
+        margin-bottom: 8px;
+        display: block;
+        text-decoration: none;
+    }
+
+    .wishlist-title:hover {
+        color: #6d28d9;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #64748b;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .btn-get-ticket {
+        background: #f5f3ff;
+        color: #6d28d9;
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 800;
+        font-size: 0.85rem;
+        margin-top: 15px;
+        transition: 0.3s;
+    }
+
+    .btn-get-ticket:hover {
+        background: #6d28d9;
+        color: white;
+    }
+
+    .empty-wishlist {
+        padding: 100px 20px;
+        text-align: center;
+    }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="fw-800 mb-1" style="letter-spacing: -1.5px;">Saved for Later</h1>
+            <p class="text-muted fw-600 mb-0">Events you're interested in, all in one place.</p>
+        </div>
+        <div class="text-muted small fw-800">
+            {{ saved_events.count }} ITEMS
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for saved in saved_events %}
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="wishlist-card shadow-sm">
+                <div class="wishlist-img-wrapper">
+                    <button class="remove-wishlist" title="Remove from saved">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    
+                    {% if saved.event.image %}
+                        <img src="{{ saved.event.image.url }}" class="wishlist-img" alt="{{ saved.event.title }}">
+                    {% else %}
+                        <div class="wishlist-img bg-light d-flex align-items-center justify-content-center">
+                            <i class="fa-solid fa-image fa-2x text-muted opacity-25"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <span class="event-category-tag">
+                        {{ saved.event.category|default:"Experience" }}
+                    </span>
+                </div>
+
+                <div class="wishlist-body">
+                    <a href="{% url 'event_detail' saved.event.pk %}" class="wishlist-title">
+                        {{ saved.event.title }}
+                    </a>
+                    
+                    <div class="meta-item mt-3">
+                        <i class="fa-regular fa-calendar text-purple"></i>
+                        {{ saved.event.date|date:"D, M d, Y" }}
+                    </div>
+                    
+                    <div class="meta-item">
+                        <i class="fa-solid fa-location-dot text-danger opacity-50"></i>
+                        {{ saved.event.location|truncatechars:20 }}
+                    </div>
+
+                    <a href="{% url 'event_detail' saved.event.pk %}" class="btn btn-get-ticket text-center text-decoration-none d-block">
+                        View Event Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-wishlist">
+                <div class="mb-4">
+                    <i class="fa-solid fa-heart-crack fa-4x text-muted opacity-25"></i>
+                </div>
+                <h3 class="fw-800 text-dark">Your wishlist is empty</h3>
+                <p class="text-muted mx-auto mb-4" style="max-width: 400px;">
+                    Keep track of events you're interested in by clicking the heart icon on any event page.
+                </p>
+                <a href="{% url 'events_list' %}" class="btn btn-dark px-5 py-3 rounded-pill fw-800 shadow">
+                    Start Exploring
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

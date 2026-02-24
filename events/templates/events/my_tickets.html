@@ -1,106 +1,217 @@
 {% extends "events/user_dashboard.html" %}
+{% load humanize %}
+
+{% block style %}
+<style>
+    /* Premium Ticket Container */
+    .ticket-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .ticket-pass {
+        background: #ffffff;
+        border-radius: 24px;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        border: 1px solid #f1f5f9;
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+
+    .ticket-pass:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Left Side: Event Branding */
+    .ticket-branding {
+        width: 15px;
+        background: linear-gradient(to bottom, #6d28d9, #a21caf);
+    }
+
+    /* Main Body */
+    .ticket-body {
+        flex: 1;
+        padding: 30px;
+        position: relative;
+    }
+
+    /* Perforated Divider (The "Cut" line) */
+    .ticket-stub-divider {
+        width: 1px;
+        border-left: 2px dashed #e2e8f0;
+        position: relative;
+        margin: 20px 0;
+    }
+
+    /* The decorative circles for the perforated look */
+    .ticket-stub-divider::before, .ticket-stub-divider::after {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        background: #f8fafc; /* Match your dashboard background color */
+        border-radius: 50%;
+        left: -13px;
+        border: 1px solid #f1f5f9;
+    }
+    .ticket-stub-divider::before { top: -45px; }
+    .ticket-stub-divider::after { bottom: -45px; }
+
+    /* Right Side: QR/Status Stub */
+    .ticket-stub {
+        width: 220px;
+        background: #fafafa;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    /* Typography */
+    .event-title-link {
+        color: #0f172a;
+        text-decoration: none;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .info-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #94a3b8;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 0.95rem;
+    }
+
+    .qr-placeholder {
+        width: 100px;
+        height: 100px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        padding: 10px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .status-pill {
+        font-size: 0.7rem;
+        font-weight: 800;
+        padding: 6px 16px;
+        border-radius: 100px;
+        background: #ecfdf5;
+        color: #059669;
+        display: inline-block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .ticket-pass { flex-direction: column; }
+        .ticket-stub { width: 100%; border-top: 2px dashed #e2e8f0; }
+        .ticket-stub-divider { display: none; }
+        .ticket-stub::before, .ticket-stub::after { display: none; }
+        .ticket-branding { width: 100%; height: 10px; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="fw-800 mb-1" style="letter-spacing: -1.5px;">My Ticket Box</h1>
+            <p class="text-muted fw-600 mb-0">You have {{ orders.count }} active passes</p>
+        </div>
+        <a href="{% url 'events_list' %}" class="btn btn-dark rounded-pill px-4 fw-800 btn-sm shadow-sm">
+            Find More Events
+        </a>
+    </div>
 
-<div class="container py-4">
-
-    <h2 class="fw-bold mb-4">🎟 My Tickets</h2>
-
-    {% if orders %}
-
+    <div class="ticket-container">
         {% for order in orders %}
+        <div class="ticket-pass shadow-sm mb-4">
+            <div class="ticket-branding"></div>
 
-        <div class="card shadow-sm mb-4 border-0" style="border-radius:16px;">
-
-            <div class="card-body">
-
-                <!-- EVENT HEADER -->
-                <div class="d-flex justify-content-between align-items-start mb-3">
-
-                    <div>
-                        <h5 class="fw-bold mb-1">
-                            {{ order.event.title }}
-                        </h5>
-
-                        <p class="text-muted mb-0">
-                            📍 {{ order.event.location }}
-                        </p>
-
-                        <small class="text-muted">
-                            {{ order.event.date }}
-                        </small>
+            <div class="ticket-body">
+                <div class="mb-4">
+                    <a href="{% url 'event_detail' order.event.pk %}" class="event-title-link mb-1 d-block">
+                        {{ order.event.title }}
+                    </a>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-danger opacity-50"></i>
+                        <span class="text-muted fw-600 small">{{ order.event.location }}</span>
                     </div>
-
-                    <span class="badge bg-success px-3 py-2">
-                        PAID
-                    </span>
-
                 </div>
 
-                <hr>
-
-                <!-- TICKET BREAKDOWN -->
-                {% for item in order.items.all %}
-
-                    <div class="d-flex justify-content-between mb-2">
-
-                        <div>
-                            <strong>{{ item.ticket.name }}</strong>
-                            <span class="text-muted">
-                                x {{ item.quantity }}
-                            </span>
+                <div class="row g-3">
+                    <div class="col-6 col-md-4">
+                        <div class="info-label">Date</div>
+                        <div class="info-value">{{ order.event.date|date:"D, M d, Y" }}</div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="info-label">Time</div>
+                        <div class="info-value">{{ order.event.time|time:"h:i A" }}</div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="info-label">Tier</div>
+                        <div class="info-value text-purple">
+                            {% for item in order.items.all %}
+                                {{ item.ticket.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
                         </div>
-
-                        <div>
-                            ₦{{ item.ticket.price }}
-                        </div>
-
                     </div>
-
-                {% endfor %}
-
-                <hr>
-
-                <!-- ORDER FOOTER -->
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-                        <small class="text-muted">
-                            Reference: {{ order.reference }}
-                        </small>
-                    </div>
-
-                    <div class="fw-bold">
-                        Total: ₦{{ order.total_amount }}
-                    </div>
-
                 </div>
 
+                <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="info-label">Reference</div>
+                        <div class="small fw-800 text-dark">{{ order.reference|upper }}</div>
+                    </div>
+                    <div class="text-end">
+                        <div class="info-label">Paid</div>
+                        <div class="fw-800 text-dark">₦{{ order.total_amount|intcomma }}</div>
+                    </div>
+                </div>
             </div>
 
+            <div class="ticket-stub-divider"></div>
+
+            <div class="ticket-stub">
+                <div class="qr-placeholder d-flex align-items-center justify-content-center">
+                    <i class="fa-solid fa-qrcode fa-4x text-dark opacity-10"></i>
+                </div>
+                <div class="status-pill mb-3">
+                    <i class="fa-solid fa-circle-check me-1"></i> VERIFIED
+                </div>
+                <a href="#" class="btn btn-outline-dark btn-sm w-100 rounded-pill fw-800">
+                    Download PDF
+                </a>
+            </div>
         </div>
-
-        {% endfor %}
-
-    {% else %}
-
-        <!-- EMPTY STATE -->
+        {% empty %}
         <div class="text-center py-5">
-
-            <h5 class="fw-bold mb-3">
-                You haven’t purchased any tickets yet.
-            </h5>
-
-            <a href="{% url 'event_list' %}" 
-               class="btn btn-dark px-4 py-2"
-               style="border-radius:12px;">
-
-               Browse Events
+            <div class="mb-4">
+                <i class="fa-solid fa-ticket-simple fa-4x text-muted opacity-25"></i>
+            </div>
+            <h4 class="fw-800 text-dark">Your ticket box is empty</h4>
+            <p class="text-muted">Once you buy a ticket, it will appear here as a digital pass.</p>
+            <a href="{% url 'event_list' %}" class="btn btn-purple px-5 py-3 rounded-pill fw-800 mt-3 shadow">
+                Explore Events
             </a>
-
         </div>
-
-    {% endif %}
-
+        {% endfor %}
+    </div>
 </div>
-
 {% endblock %}

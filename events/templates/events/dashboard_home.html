@@ -1,37 +1,478 @@
-{% extends "events/user_dashboard.html" %}
+{% extends 'events/user_dashboard.html' %}
+{% load humanize %}
+
+{% block style %}
+<style>
+    /* Premium Typography */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+    
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* The "Hero" Banner - Glassmorphism style */
+    .premium-hero {
+        background: radial-gradient(circle at top right, #8b5cf6, #6d28d9);
+        border-radius: 30px;
+        padding: 50px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Floating Abstract Shapes for Beauty */
+    .premium-hero::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+        border-radius: 50%;
+        top: -100px;
+        right: -50px;
+    }
+
+    .hero-title {
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        font-size: 2.8rem;
+        color: #fff;
+    }
+
+    /* Minimalist Stat Cards */
+    .glass-card {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 24px;
+        padding: 25px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .glass-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+        border-color: #6d28d9;
+    }
+
+    .icon-box {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #94a3b8;
+    }
+
+    .discover-btn {
+        background: #ffffff;
+        color: #6d28d9;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 16px;
+        font-weight: 700;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .discover-btn:hover {
+        background: #f8fafc;
+        transform: scale(1.05);
+    }
+
+
+    .event-list-container {
+        background: transparent;
+    }
+    
+    /* Individual Row Styling */
+    .event-row {
+        background: #ffffff;
+        border-radius: 20px;
+        margin-bottom: 15px;
+        padding: 20px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .event-row:hover {
+        transform: scale(1.01);
+        box-shadow: 0 15px 30px rgba(109, 40, 217, 0.05);
+        border-color: #ddd6fe;
+    }
+
+    .event-poster {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        object-fit: cover;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Column Headers (Hidden on small, visible on top of list) */
+    .list-header {
+        padding: 0 25px 15px;
+        font-weight: 800;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Custom Badges */
+    .badge-date {
+        background: #fdf4ff;
+        color: #a21caf;
+        padding: 8px 14px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.8rem;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .location-info {
+        color: #64748b;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .btn-ticket {
+        background: #0f172a;
+        color: white;
+        border-radius: 14px;
+        padding: 12px 24px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: 0.3s;
+        border: none;
+    }
+
+    .btn-ticket:hover {
+        background: #6d28d9;
+        color: white;
+        box-shadow: 0 8px 20px rgba(109, 40, 217, 0.3);
+    }
+
+    /* Live/Upcoming Pulse */
+    .status-pulse {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        box-shadow: 0 0 0 rgba(34, 197, 94, 0.4);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .modern-table-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid #f1f5f9;
+        overflow: hidden;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    /* Header Styling */
+    .custom-table thead th {
+        background: #f8fafc;
+        padding: 16px 24px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Row Styling */
+    .custom-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #fcfaff;
+    }
+
+    .custom-table tbody td {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f8fafc;
+        vertical-align: middle;
+    }
+
+    /* Content Styling */
+    .event-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .event-title {
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 2px;
+        font-size: 0.95rem;
+    }
+
+    .org-name {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    /* Date/Time Styling */
+    .datetime-box {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .date-text {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 0.9rem;
+    }
+
+    .time-text {
+        color: #94a3b8;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    /* Location Styling */
+    .loc-text {
+        font-weight: 600;
+        color: #475569;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Status Dot */
+    .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: #f0fdf4;
+        color: #16a34a;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 800;
+    }
+
+    .dot {
+        width: 6px;
+        height: 6px;
+        background: #16a34a;
+        border-radius: 50%;
+    }
+
+    .manage-link {
+        color: #6d28d9;
+        font-weight: 800;
+        text-decoration: none;
+        font-size: 0.85rem;
+        padding: 8px 16px;
+        border-radius: 10px;
+        background: #f5f3ff;
+        transition: 0.3s;
+    }
+
+    .manage-link:hover {
+        background: #6d28d9;
+        color: white;
+    }
+</style>
+{% endblock style %}
 
 {% block content %}
-
-<h2>Welcome, {{ user.username }}</h2>
-
-<h3>Quick Stats</h3>
-<p>Saved Events: {{ saved_count }}</p>
-
-<hr>
-
-<h3>Upcoming Events</h3>
-
-{% for event in upcoming_events %}
-    <div>
-        <h4>{{ event.title }}</h4>
-        <p>{{ event.date }}</p>
-        <p>{{ event.location }}</p>
+<div class="container-fluid py-4">
+    
+    <div class="premium-hero shadow-lg mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="badge bg-white bg-opacity-25 text-white mb-3 px-3 py-2 rounded-pill fw-bold">
+                    ✨ Member Dashboard
+                </span>
+                <h1 class="hero-title mb-3">
+                    Hey, {{ user.first_name|default:user.username }}!
+                </h1>
+                <p class="text-white opacity-75 fs-5 mb-0">
+                    You've got <span class="fw-bold opacity-100">{{ upcoming_events.count }} events</span> locked in. 
+                    Ready for the next adventure?
+                </p>
+            </div>
+            <div class="col-lg-5 text-lg-end mt-4 mt-lg-0">
+                <a href="{% url 'events_list' %}" class="discover-btn d-inline-block text-decoration-none">
+                    Browse Events <i class="fa-solid fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
     </div>
-{% empty %}
-    <p>No upcoming events.</p>
-{% endfor %}
 
-<hr>
-
-<h3>Past Events</h3>
-
-{% for event in past_events %}
-    <div>
-        <h4>{{ event.title }}</h4>
-        <p>{{ event.date }}</p>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="glass-card h-100">
+                <div class="icon-box" style="background: #f5f3ff; color: #7c3aed;">
+                    <i class="fa-solid fa-calendar-day"></i>
+                </div>
+                <div class="stat-number">{{ upcoming_events.count }}</div>
+                <div class="stat-label">Upcoming Plans</div>
+            </div>
+        </div>
+    
+        <div class="col-md-4">
+            <div class="glass-card h-100">
+                <div class="icon-box" style="background: #fff1f2; color: #f43f5e;">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="stat-number">{{ saved_count }}</div>
+                <div class="stat-label">Wishlist Items</div>
+            </div>
+        </div>
+    
+        <div class="col-md-4">
+            <div class="glass-card h-100">
+                <div class="icon-box" style="background: #f0fdf4; color: #22c55e;">
+                    <i class="fa-solid fa-ticket-simple"></i>
+                </div>
+                <div class="stat-number">{{ past_events.count }}</div>
+                <div class="stat-label">Past Experiences</div>
+            </div>
+        </div>
     </div>
-{% empty %}
-    <p>No past events.</p>
-{% endfor %}
 
-{% endblock %}
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+            <div>
+                <h3 class="fw-800 mb-1" style="letter-spacing: -1.2px; color: #0f172a;">Upcoming Schedule</h3>
+                <p class="text-muted small fw-600 mb-0">Your confirmed spots for the next few weeks</p>
+            </div>
+            <a href="#" class="text-purple fw-800 text-decoration-none small ls-1">
+                VIEW FULL CALENDAR <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.7rem;"></i>
+            </a>
+        </div>
+    
+        <div class="modern-table-card shadow-sm">
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Event Details</th>
+                            <th style="width: 20%;">Date & Time</th>
+                            <th style="width: 20%;">Location</th>
+                            <th style="width: 20%;" class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in upcoming_events %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    {% if event.image %}
+                                        <img src="{{ event.image.url }}" class="event-img">
+                                    {% else %}
+                                        <div class="event-img bg-light d-flex align-items-center justify-content-center text-muted">
+                                            <i class="fa-solid fa-image"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="status-indicator mb-1">
+                                            <span class="dot"></span> Confirmed
+                                        </div>
+                                        <div class="event-title">{{ event.title }}</div>
+                                        <div class="org-name">By {{ event.organizer.organization_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+    
+                            <td>
+                                <div class="datetime-box">
+                                    <span class="date-text">{{ event.date|date:"D, M d, Y" }}</span>
+                                    <span class="time-text">{{ event.start_time|time:"h:i A" }}</span>
+                                </div>
+                            </td>
+    
+                            <td>
+                                <div class="loc-text">
+                                    <i class="fa-solid fa-location-dot text-danger opacity-50"></i>
+                                    {{ event.venue|truncatechars:20 }}
+                                </div>
+                            </td>
+    
+                            <td class="text-end">
+                                <a href="{% url 'event_detail' event.pk %}" class="manage-link">
+                                    Manage <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <div class="py-4">
+                                    <i class="fa-solid fa-calendar-xmark fa-3x text-muted opacity-20 mb-3"></i>
+                                    <h5 class="fw-800 text-slate-400">No upcoming events found</h5>
+                                    <p class="text-muted small">Once you join an event, it will appear here.</p>
+                                    <a href="{% url 'events_list' %}" class="btn btn-purple btn-sm rounded-pill px-4 mt-2">Find Events</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="fw-800 mb-4 px-2">Past Memories</h5>
+    <div class="row g-4">
+        {% for event in past_events %}
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden grayscale-hover transition-all">
+                {% if event.image %}
+                <img src="{{ event.image.url }}" class="card-img-top" style="height: 140px; object-fit: cover; filter: grayscale(40%);">
+                {% endif %}
+                <div class="card-body p-3">
+                    <h6 class="fw-800 mb-1 text-truncate">{{ event.title }}</h6>
+                    <p class="extra-small text-muted mb-0">{{ event.date|date:"F Y" }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 px-2 text-muted small">Once you attend an event, it will appear here.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

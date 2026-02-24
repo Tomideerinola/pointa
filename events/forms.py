@@ -414,6 +414,37 @@ class OrganizerForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
+
     class Meta:
         model = User
         fields = ["email"]  # This is the login email
+
+
+
+
+class UserUpdateForm(forms.ModelForm):
+    """
+    Form for updating basic user profile info
+    """
+
+    class Meta:
+        model = User  # We are editing the built-in User model
+
+        # Fields we allow users to edit
+        fields = ["first_name", "last_name", "email"]
+
+        # Optional: Add Bootstrap classes directly
+        widgets = {
+            "first_name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "First name"
+            }),
+            "last_name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Last name"
+            }),
+            "email": forms.EmailInput(attrs={
+                "class": "form-control",
+                "placeholder": "Email address"
+            }),
+        }

@@ -1,11 +1,12 @@
 import uuid
 import requests
 from django.conf import settings
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Sum
 from django.shortcuts import render, redirect , get_object_or_404
-from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet,OrganizerForm,UserForm
+from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet,OrganizerForm,UserForm,UserUpdateForm
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -42,26 +43,33 @@ def user_logout(request):
     return redirect('home')  # Redirect to homepage (or login)
 
 
-# user login view 
 def user_login(request):
-    """
-    Handle login with email and password
-    """
-    form = UserLoginForm(request.POST or None)  # instantiate with POST data if available
+
+    form = UserLoginForm(request.POST or None)
+
+    #Get next from POST first (after form submission), else GET
+    next_url = request.POST.get("next") or request.GET.get("next")
 
     if request.method == "POST":
+
         if form.is_valid():
-            # Get the authenticated user from cleaned_data
+
             user = form.cleaned_data["user"]
 
-            # Log the user in
             auth_login(request, user)
 
-            # Redirect to dashboard
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url,
+                allowed_hosts={request.get_host()}
+            ):
+                return redirect(next_url)
+
             return redirect("dashboard")
 
-    # Always pass the form to the template, even if GET or invalid POST
-    return render(request, "events/login.html", {"form": form, "DEBUG_VIEW": "THIS IS USER_LOGIN VIEW"})
+    return render(request, "events/login.html", {
+        "form": form,
+        "next": next_url
+    })
 
 
 
@@ -168,40 +176,6 @@ def dashboard(request):
     return render(request, 'events/dashboard_home.html', context)
 
 
-
-# @login_required(login_url='organizer_login')
-# def create_event(request):
-
-#     organizer = request.user.organizer
-
-#     if request.method == "POST":
-#         form = EventForm(request.POST, request.FILES)
-#         ticket_formset = TicketFormSet(request.POST)
-
-#         if form.is_valid() and ticket_formset.is_valid():
-
-#             event = form.save(commit=False)
-#             event.organizer = organizer
-#             event.save()
-
-#             tickets = ticket_formset.save(commit=False)
-#             for ticket in tickets:
-#                 ticket.event = event
-#                 ticket.save()
-#             messages.success(request, f'Success! "{event.title}" has been created.')
-
-#             return redirect("org_dashboard")
-
-#     else:
-#         form = EventForm()
-#         ticket_formset = TicketFormSet()
-
-#     return render(request, "events/create_event.html", {
-#         "form": form,
-#         "ticket_formset": ticket_formset
-#     })
-
-
 @login_required(login_url='organizer_login')
 def create_event(request):
     try:
@@ -286,12 +260,24 @@ def event_detail(request, event_id):
     }
     return render(request, "events/event_detail.html", context)
 
-@login_required(login_url='user_login')
+
 def booking_confirm(request, event_id):
     """
     Handles ticket selection and shows confirmation page
     Requires user to be logged in
     """
+        # Manual authentication check instead of using login required 
+    if not request.user.is_authenticated:
+        messages.warning(
+            request,
+            "You need to login before booking an event."
+        )
+
+        # Get login URL dynamically
+        login_url = reverse("user_login")
+                # Redirect to login with next parameter
+        return redirect(f"{login_url}?next={request.path}")
+
 
     event = get_object_or_404(Event, id=event_id)
 
@@ -662,4 +648,38 @@ def saved_events(request):
 
     return render(request, 'events/saved_events.html', {
         "saved_events": saved
+    })
+
+
+@login_required
+def edit_profile(request):
+    """
+    Allows logged-in users to update their profile
+    """
+
+    # If user submits form (POST request)
+    if request.method == "POST":
+
+        # Bind submitted data to form
+        form = UserUpdateForm(request.POST, instance=request.user)
+
+        # Check if form data is valid
+        if form.is_valid():
+
+            # Save the updated user info
+            form.save()
+
+            # Show success message
+            messages.success(request, "Profile updated successfully!")
+
+            # Redirect back to dashboard
+            return redirect("dashboard")
+
+    else:
+        # If page is loaded normally (GET request),
+        # pre-fill form with existing user data
+        form = UserUpdateForm(instance=request.user)
+
+    return render(request, "events/edit_profile.html", {
+        "form": form
     })
