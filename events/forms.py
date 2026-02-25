@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile, Organizer, Event, Ticket
+from .models import Profile, Organizer, Event, Ticket, NewsletterEmail
 from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
@@ -447,4 +447,17 @@ class UserUpdateForm(forms.ModelForm):
                 "class": "form-control",
                 "placeholder": "Email address"
             }),
+        }
+
+
+class NewsletterForm(forms.ModelForm):
+    class Meta:
+        model = NewsletterEmail
+        fields = ["email"]
+        widgets = {
+            "email": forms.EmailInput(attrs={
+                "placeholder": "Your email address",
+                "class": "form-control",
+                "required": True
+            })
         }

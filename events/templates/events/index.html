@@ -646,13 +646,28 @@ TABLETS & MEDIUM DEVICES
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link px-3" href="{% url 'events_list' %}">Browse Events</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle px-3" href="#" id="catDrop" role="button" data-bs-toggle="dropdown">Categories</a>
+                        <a class="nav-link dropdown-toggle px-3" href="#" id="catDrop" role="button" data-bs-toggle="dropdown">
+                            {% if selected_category %}{{ selected_category.name }}{% else %}Categories{% endif %}
+                        </a>
                         <ul class="dropdown-menu border-0 shadow-sm mt-3" aria-labelledby="catDrop">
-                            <li><a class="dropdown-item" href="#">Conferences</a></li>
-                            <li><a class="dropdown-item" href="#">Workshops</a></li>
-                            <li><a class="dropdown-item" href="#">Music & Art</a></li>
+                            <!-- All Categories link -->
+                            <li>
+                                <a class="dropdown-item {% if not selected_category %}active{% endif %}" 
+                                   href="{% url 'events_list' %}">
+                                    All Categories
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">All Categories</a></li>
+                    
+                            <!-- Dynamic categories -->
+                            {% for cat in categories %}
+                            <li>
+                                <a class="dropdown-item {% if selected_category and selected_category.id == cat.id %}active{% endif %}" 
+                                   href="{% url 'events_list' %}?category={{ cat.id }}">
+                                    {{ cat.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link px-3" href="#">About Us</a></li>
@@ -857,7 +872,10 @@ TABLETS & MEDIUM DEVICES
                                 {% else %}
                                     <span class="h5 fw-bold mb-0 text-purple">TBA</span>
                                 {% endif %}
-                                <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm px-4">View Event</a>
+                                <!-- <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm px-4">View Event</a> -->
+                                <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm px-4 rounded-pill fw-bold">
+                                    Get Ticket
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1093,7 +1111,17 @@ TABLETS & MEDIUM DEVICES
         </div>
     </section>
     <footer class="footer-section">
+
         <div class="container">
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
             <div class="row g-4">
                 <div class="col-lg-3 mb-4">
                     <a class="footer-brand d-flex align-items-center gap-2 mb-4 text-decoration-none" href="#">
@@ -1145,9 +1173,10 @@ TABLETS & MEDIUM DEVICES
                         <h5>Don't miss the vibe</h5>
                         <p class="small opacity-75 mb-4">Get notified about the hottest events in your city before they sell out.</p>
                         
-                        <form action="#" method="POST" class="newsletter-form">
+                        <form action="{% url 'newsletter_subscribe' %}" method="POST" class="newsletter-form">
+                            {% csrf_token %}
                             <div class="input-group-custom">
-                                <input type="email" placeholder="Your email address" required>
+                                <input type="email" name="email" placeholder="Your email address" required>
                                 <button type="submit">Join</button>
                             </div>
                         </form>

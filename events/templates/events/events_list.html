@@ -760,7 +760,7 @@ TABLETS & MEDIUM DEVICES
 <body>
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand-custom" href="#">
+            <a class="navbar-brand-custom" href="{%url 'home'%}">
                 <span style="color: var(--primary-purple); line-height: 0;">
                     <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_18078_104881)">
@@ -775,7 +775,9 @@ TABLETS & MEDIUM DEVICES
                         <defs><clipPath id="clip0_18078_104881"><rect width="34" height="34" fill="white" /></clipPath></defs>
                     </svg>
                 </span>
+
                 <span class="brand-text">Pointa</span>
+
             </a>
             <div class="collapse navbar-collapse" id="navPointa">
                 <ul class="navbar-nav mx-auto">
@@ -847,7 +849,7 @@ TABLETS & MEDIUM DEVICES
                     <div class="search-divider"></div>
                     <div class="search-item">
                         <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" name="city" value="{{ city }}" placeholder="All Cities">
+                        <input type="text" name="city" value="{{ city }}" placeholder="All States">
                     </div>
                     <button type="submit" class="btn-search-trigger">
                         <span>Find Events</span>
@@ -996,7 +998,10 @@ TABLETS & MEDIUM DEVICES
                     {% empty %}
                     <div class="col-12 text-center py-5">
                         <i class="fa-solid fa-calendar-xmark fa-4x text-light mb-3"></i>
-                        <h4 class="text-muted">No events found matching your search.</h4>
+                        <!-- <h4 class="text-muted">No events found matching your search.</h4> -->
+                        <p class="text-muted mx-auto" style="max-width: 420px;">
+                            We couldn't find any events in the <strong>{{ selected_categories.name|default:"selected" }}</strong> category right now.
+                        </p>
                         <a href="{% url 'events_list' %}" class="text-purple fw-bold">Clear all filters</a>
                     </div>
                     {% endfor %}

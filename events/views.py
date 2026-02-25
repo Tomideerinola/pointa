@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Sum
 from django.shortcuts import render, redirect , get_object_or_404
-from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet,OrganizerForm,UserForm,UserUpdateForm
+from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet,OrganizerForm,UserForm,UserUpdateForm,NewsletterForm
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -37,7 +37,7 @@ def home(request):
     # Upcoming events (filtered if category selected)
     upcoming_events = events.filter(
         date__gte=now
-    ).order_by('date')
+    ).order_by('date')[:6]
 
     # Past events (filtered if category selected)
     past_events = events.filter(
@@ -280,10 +280,16 @@ def events_list(request):
     events = Event.objects.filter(status="active")
 
     # Get filter values from URL
-    q = request.GET.get("q")
-    city = request.GET.get("city")
+    q = request.GET.get("q", "").strip()      # search query
+    city = request.GET.get("city", "").strip()  # city filter
     category_id = request.GET.get("category")
     locations = request.GET.getlist("location")  # for checkboxes
+
+    selected_categories = None
+
+    if category_id:
+        events = events.filter(category_id=category_id)
+        selected_categories = Category.objects.filter(id=category_id).first()
 
     # 🔎 Search by name or category name
     if q:
@@ -292,22 +298,22 @@ def events_list(request):
             Q(category__name__icontains=q)
         )
 
-    # 📍 Filter by city input (top search bar)
+    # Filter by city input (top search bar)
     if city:
-        events = events.filter(venue__icontains=city)
+        events = events.filter(state__icontains=city)
 
-    # 📂 Filter by category (dropdown)
+    #  Filter by category (dropdown)
     if category_id:
         events = events.filter(category_id=category_id)
 
-    # 📌 Filter by multiple checkbox locations
+    # Filter by multiple checkbox locations
     if locations:
-        events = events.filter(venue__in=locations)
+        events = events.filter(state__in=locations)
 
     events = events.order_by("-date")
 
     categories = Category.objects.all()
-    available_locations = ["Lagos", "Abuja"]
+    available_locations = [choice[0] for choice in Event.STATE_CHOICES]
 
     return render(request, "events/events_list.html", {
         "events": events,
@@ -317,6 +323,7 @@ def events_list(request):
         "q": q,
         "city": city,
         "available_locations": available_locations,
+        "selected_categories": selected_categories, 
     })
 
 
@@ -775,3 +782,17 @@ def edit_profile(request):
     return render(request, "events/edit_profile.html", {
         "form": form
     })
+
+
+
+def newsletter_subscribe(request):
+    if request.method == "POST":
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Thanks! Your email has been received.")
+        else:
+            messages.error(request, "This email is already subscribed or invalid.")
+    return redirect(request.META.get('HTTP_REFERER', '/'))  # Redirect back to the page
+
+
