@@ -1,3 +1,4 @@
+{%load humanize%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -841,12 +842,12 @@ TABLETS & MEDIUM DEVICES
                 <div class="search-inner">
                     <div class="search-item">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" name="q" placeholder="Search event name or category...">
+                        <input type="text" name="q" value="{{ q }}" placeholder="Search event name or category...">
                     </div>
                     <div class="search-divider"></div>
                     <div class="search-item">
                         <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" name="city" placeholder="All Cities">
+                        <input type="text" name="city" value="{{ city }}" placeholder="All Cities">
                     </div>
                     <button type="submit" class="btn-search-trigger">
                         <span>Find Events</span>
@@ -861,7 +862,61 @@ TABLETS & MEDIUM DEVICES
         <div class="row g-4">
             
             <div class="col-lg-3 d-none d-lg-block">
-                <div class="filter-card">
+                <form method="GET" action="{% url 'events_list' %}">
+                    <div class="filter-card">
+                        <h5 class="filter-title">Filter By</h5>
+                
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <label class="fw-bold small text-uppercase mb-2 d-block text-muted">
+                                Category
+                            </label>
+                
+                            <select name="category" class="form-select border-0 bg-light rounded-3">
+                                <option value="">All Categories</option>
+                
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}"
+                                        {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ cat.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                
+                        <!-- Location Checkboxes -->
+                        <div class="mb-4">
+                            <label class="fw-bold small text-uppercase mb-2 d-block text-muted">
+                                Location
+                            </label>
+                
+                            {% for loc in available_locations %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="location"
+                                           value="{{ loc }}"
+                                           {% if loc in selected_locations %}checked{% endif %}>
+                                    <label class="form-check-label small">
+                                        {{ loc }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                
+                        <button type="submit"
+                                class="btn btn-purple w-100 rounded-3 py-2 fw-bold"
+                                style="background: var(--p-purple); color: white;">
+                            Apply Filters
+                        </button>
+                    </div>
+                </form>
+
+
+
+
+
+                <!-- <div class="filter-card">
                     <h5 class="filter-title">Filter By</h5>
                     
                     <div class="mb-4">
@@ -891,7 +946,7 @@ TABLETS & MEDIUM DEVICES
                     </div>
 
                     <button class="btn btn-purple w-100 rounded-3 py-2 fw-bold" style="background: var(--p-purple); color: white;">Apply Filters</button>
-                </div>
+                </div> -->
             </div>
 
             <div class="col-lg-9">
@@ -907,7 +962,7 @@ TABLETS & MEDIUM DEVICES
                             <div class="card-img-wrapper">
                                 <div class="price-tag">
                                     {% if event.tickets.all %}
-                                        ₦{{ event.tickets.first.price|floatformat:0 }}
+                                        ₦{{ event.tickets.first.price|floatformat:0|intcomma }}
                                     {% else %}
                                         Free
                                     {% endif %}

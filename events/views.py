@@ -1,7 +1,9 @@
 import uuid
 import requests
 from django.conf import settings
+from django.db.models import Q
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.http import JsonResponse
 from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Sum
@@ -10,7 +12,7 @@ from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, Event
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem, SavedEvent
+from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem, SavedEvent, Category
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -19,8 +21,37 @@ from django.contrib.auth.models import User
 # homepage route 
 
 def home(request):
-    events = Event.objects.filter(status="active").order_by("-date")  # show upcoming first
-    return render(request, 'events/index.html', {'events':events})
+    now = timezone.now()
+
+    # Base queryset (only active events)
+    events = Event.objects.filter(status="active")
+
+    # Get category from URL
+    category_id = request.GET.get('category')
+    selected_category = None
+
+    if category_id:
+        events = events.filter(category_id=category_id)
+        selected_category = Category.objects.filter(id=category_id).first()
+
+    # Upcoming events (filtered if category selected)
+    upcoming_events = events.filter(
+        date__gte=now
+    ).order_by('date')
+
+    # Past events (filtered if category selected)
+    past_events = events.filter(
+        date__lt=now
+    ).order_by('-date')
+
+    categories = Category.objects.all()
+
+    return render(request, 'events/index.html', {
+        "upc": upcoming_events,
+        "past": past_events,
+        "categories": categories,
+        "selected_category": selected_category,
+    })
 
 def user_signup(request):
     if request.method == "POST":
@@ -145,23 +176,23 @@ def dashboard(request):
     # Get current time (used for filtering past/upcoming events)
     now = timezone.now()
 
-    # -----------------------------
+
     # Upcoming Events (based on date)
-    # -----------------------------
+
     upcoming_events = Event.objects.filter(
         date__gte=now  # Event date greater than or equal to now
     ).order_by('date')[:3]  # Show only 3 on dashboard
 
-    # -----------------------------
+
     # Past Events
-    # -----------------------------
+
     past_events = Event.objects.filter(
         date__lt=now
     ).order_by('-date')[:3]
 
-    # -----------------------------
+
     # Saved Events Count
-    # -----------------------------
+
     saved_count = SavedEvent.objects.filter(
         user=user
     ).count()
@@ -244,8 +275,49 @@ def organizer_login(request):
 
 
 def events_list(request):
-    events = Event.objects.filter(status="active").order_by("-date")  # show upcoming first
-    return render(request, "events/events_list.html", {"events": events})
+
+    # Start with active events
+    events = Event.objects.filter(status="active")
+
+    # Get filter values from URL
+    q = request.GET.get("q")
+    city = request.GET.get("city")
+    category_id = request.GET.get("category")
+    locations = request.GET.getlist("location")  # for checkboxes
+
+    # 🔎 Search by name or category name
+    if q:
+        events = events.filter(
+            Q(title__icontains=q) |
+            Q(category__name__icontains=q)
+        )
+
+    # 📍 Filter by city input (top search bar)
+    if city:
+        events = events.filter(venue__icontains=city)
+
+    # 📂 Filter by category (dropdown)
+    if category_id:
+        events = events.filter(category_id=category_id)
+
+    # 📌 Filter by multiple checkbox locations
+    if locations:
+        events = events.filter(venue__in=locations)
+
+    events = events.order_by("-date")
+
+    categories = Category.objects.all()
+    available_locations = ["Lagos", "Abuja"]
+
+    return render(request, "events/events_list.html", {
+        "events": events,
+        "categories": categories,
+        "selected_category": category_id,
+        "selected_locations": locations,
+        "q": q,
+        "city": city,
+        "available_locations": available_locations,
+    })
 
 
 def event_detail(request, event_id):
@@ -254,11 +326,31 @@ def event_detail(request, event_id):
     """
     event = get_object_or_404(Event, id=event_id)
     tickets = event.tickets.all()  # Get all ticket types for this event
+    # Check if this specific user has saved this event
+    is_saved = False
+    if request.user.is_authenticated:
+        is_saved = SavedEvent.objects.filter(user=request.user, event=event).exists()
     context = {
         "event": event,
         "tickets": tickets,
+        "is_saved": is_saved,
     }
     return render(request, "events/event_detail.html", context)
+
+
+@login_required
+def toggle_save_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    saved_item = SavedEvent.objects.filter(user=request.user, event=event)
+
+    if saved_item.exists():
+        saved_item.delete()
+        saved = False
+    else:
+        SavedEvent.objects.create(user=request.user, event=event)
+        saved = True
+
+    return JsonResponse({'saved': saved})
 
 
 def booking_confirm(request, event_id):

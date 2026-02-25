@@ -435,6 +435,40 @@
         padding: 20px;
         border: 1px solid rgba(111, 66, 193, 0.1);
     }
+    .save-btn {
+        border: 2px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    /* The "Saved" State */
+    .save-btn.is-saved {
+        background: #fff1f2;
+        border-color: #fda4af;
+        color: #e11d48; /* Red heart color */
+        transform: scale(1.1);
+    }
+
+    .save-btn:hover {
+        transform: translateY(-3px);
+    }
+    
+    .save-btn i {
+        font-size: 1.4rem;
+        transition: transform 0.2s ease;
+    }
+
+    .save-btn:active i {
+        transform: scale(0.7);
+    }
     </style>
 </head>
 <body>
@@ -477,6 +511,7 @@
 
     <div class="container py-5">
         <div class="event-hero-container mb-5">
+
             {% if event.image %}
                 <img src="{{ event.image.url }}" class="hero-img" alt="{{ event.title }}">
             {% else %}
@@ -501,6 +536,11 @@
                     <div class="info-pill"><i class="fa-solid fa-calendar-days"></i> {{ event.date|date:"l, d F Y" }}</div>
                     <div class="info-pill"><i class="fa-solid fa-clock"></i> {{ event.start_time|time:"h:i A" }} - {{ event.end_time|time:"h:i A" }}</div>
                     <div class="info-pill"><i class="fa-solid fa-location-arrow"></i> {{ event.event_type|title }}</div>
+                    <button id="save-event-btn" 
+                    class="save-btn {% if is_saved %}is-saved{% endif %}" 
+                    data-event-id="{{ event.id }}">
+                    <i class="{% if is_saved %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                </button>
                 </div>
             
                 <div class="mb-5">
@@ -691,6 +731,37 @@
     
         // Run on load
         window.onload = calculateTotal;
+
+
+    document.getElementById('save-event-btn').addEventListener('click', function() {
+    const btn = this;
+    const icon = btn.querySelector('i');
+    const eventId = btn.getAttribute('data-event-id');
+
+    // Simple AJAX call to your Django view
+    fetch(`/event/${eventId}/toggle-save/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.saved) {
+            // It's saved! Change to solid red heart
+            btn.classList.add('is-saved');
+            icon.classList.remove('fa-regular');
+            icon.classList.add('fa-solid');
+        } else {
+            // Removed! Change back to regular heart
+            btn.classList.remove('is-saved');
+            icon.classList.remove('fa-solid');
+            icon.classList.add('fa-regular');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
     </script>
 </body>
 </html>

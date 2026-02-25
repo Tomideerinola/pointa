@@ -30,5 +30,6 @@ urlpatterns = [
     path('past_events/', views.past_events, name='past_events'),
     path('saved_events/', views.saved_events, name='saved_events'),
     path('profile-settings/', views.edit_profile, name='edit_profile'),
+    path('event/<int:event_id>/toggle-save/', views.toggle_save_event, name='toggle_save_event'),
 
 ]

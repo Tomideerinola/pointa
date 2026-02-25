@@ -707,28 +707,7 @@ TABLETS & MEDIUM DEVICES
         </div>
     </section>
 
-    <!-- <div class="container">
-        <div class="stats-bar">
-            <div class="row text-center">
-                <div class="col-md-3 border-end">
-                    <span class="stat-number" data-target="50">0</span>
-                    <p class="text-muted fw-bold small text-uppercase">Events Hosted (k+)</p>
-                </div>
-                <div class="col-md-3 border-end">
-                    <span class="stat-number" data-target="12">0</span>
-                    <p class="text-muted fw-bold small text-uppercase">Tickets Sold (M+)</p>
-                </div>
-                <div class="col-md-3 border-end">
-                    <span class="stat-number" data-target="5">0</span>
-                    <p class="text-muted fw-bold small text-uppercase">Avg Rating (/5)</p>
-                </div>
-                <div class="col-md-3">
-                    <span class="stat-number">24/7</span>
-                    <p class="text-muted fw-bold small text-uppercase">Live Support</p>
-                </div>
-            </div>
-        </div>
-    </div> -->
+
 
     <div class="container">
         <div class="stats-bar">
@@ -766,23 +745,31 @@ TABLETS & MEDIUM DEVICES
                 
                 <div class="dropdown">
                     <button class="btn btn-outline-dark dropdown-toggle px-4 py-2 fw-bold" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 12px; border-width: 2px;">
-                        <i class="fa-solid fa-filter me-2 small"></i> Filter by Category
+                        <i class="fa-solid fa-filter me-2 small"></i> 
+                        {% if selected_category %}{{ selected_category.name }}{% else %}Filter by Category{% endif %}
                     </button>
+                    
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2" aria-labelledby="categoryDropdown" style="border-radius: 15px; min-width: 220px;">
-                        <li><a class="dropdown-item rounded-3 active" href="#">All Categories</a></li>
+                        <li>
+                            <a class="dropdown-item rounded-3 {% if not selected_category %}active{% endif %}" href="{% url 'home' %}">
+                                All Categories
+                            </a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-microphone-lines me-2 opacity-50"></i> Concerts & Raves</a></li>
-                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-rings-wedding me-2 opacity-50"></i> Owambe & Weddings</a></li>
-                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-laptop-code me-2 opacity-50"></i> Tech & Summits</a></li>
-                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-church me-2 opacity-50"></i> Religious Gatherings</a></li>
-                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-utensils me-2 opacity-50"></i> Food & Drink Fests</a></li>
-                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-briefcase me-2 opacity-50"></i> Business & Corporate</a></li>
-                        <li><a class="dropdown-item rounded-3" href="#"><i class="fa-solid fa-palette me-2 opacity-50"></i> Arts & Lifestyle</a></li>
+                
+                        {% for cat in categories %}
+                        <li>
+                            <a class="dropdown-item rounded-3 {% if selected_category.id == cat.id %}active{% endif %}" 
+                            href="{% url 'home' %}?category={{ cat.id }}">
+                                {{ cat.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
     
-            <div class="row g-4">
+            <!-- <div class="row g-4">
                 {% for event in events %}
                 <div class="col-lg-4 col-md-6">
                     <div class="card event-card h-100 p-3">
@@ -829,7 +816,129 @@ TABLETS & MEDIUM DEVICES
                 {% empty %}
                 <p class="text-muted fw-bold">No events found.</p>
                 {% endfor %}
+            </div> -->
+
+            <div class="row g-4">
+                {% for event in upc %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card event-card h-100 p-3">
+                        <div class="position-relative">
+                            {% if event.image %}
+                            <img src="{{ event.image.url }}" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                            {% else %}
+                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                            {% endif %}
+                            {% if event.status == "active" %}
+                            <span class="badge position-absolute top-0 end-0 m-3 bg-white text-dark shadow-sm px-3 py-2 rounded-pill small fw-bold">
+                                {{ event.event_type|title }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge badge-purple">{{ event.category.name }}</span>
+                                <span class="text-muted fw-bold small">{{ event.date|date:"M d" }}</span>
+                            </div>
+                            <h5 class="fw-bold">{{ event.title }}</h5>
+                            <p class="text-muted small mb-3">
+                                <i class="fa-solid fa-location-dot me-1 text-purple"></i> {{ event.venue }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if event.tickets.exists %}
+                                    {% with ticket=event.tickets.first %}
+                                    <span class="h5 fw-bold mb-0 text-purple">
+                                        {% if ticket.price == 0 %}
+                                            Free
+                                        {% else %}
+                                            ₦{{ ticket.price|floatformat:0|intcomma }}
+                                        {% endif %}
+                                    </span>
+                                    {% endwith %}
+                                {% else %}
+                                    <span class="h5 fw-bold mb-0 text-purple">TBA</span>
+                                {% endif %}
+                                <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm px-4">View Event</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <!-- <p class="text-muted fw-bold">No events found.</p> -->
+                <p class="text-muted mx-auto" style="max-width: 420px;">
+                    We couldn't find any events in the <strong>{{ selected_category.name|default:"selected" }}</strong> category right now.
+                </p>
+                <a href="{% url 'events_list' %}" class="btn btn-outline-purple rounded-pill px-4 mt-3 fw-800">
+                    Browse All Events
+                </a>
+                {% endfor %}
             </div>
+
+
+            <!-- <div class="row g-4">
+                {% for event in upc %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card event-card h-100 p-3 shadow-sm border-0" style="border-radius: 20px;">
+                        <div class="position-relative">
+                            {% if event.image %}
+                                <img src="{{ event.image.url }}" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                            {% else %}
+                                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
+                            {% endif %}
+                            
+                            {% if event.status == "active" %}
+                            <span class="badge position-absolute top-0 end-0 m-3 bg-white text-dark shadow-sm px-3 py-2 rounded-pill small fw-bold">
+                                {{ event.event_type|title }}
+                            </span>
+                            {% endif %}
+                        </div>
+            
+                        <div class="card-body p-0">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge badge-purple bg-soft-purple text-purple">{{ event.category.name }}</span>
+                                <span class="text-muted fw-bold small">{{ event.date|date:"M d" }}</span>
+                            </div>
+                            
+                            <h5 class="fw-bold mb-1">{{ event.title }}</h5>
+                            <p class="text-muted small mb-3">
+                                <i class="fa-solid fa-location-dot me-1 text-purple"></i> {{ event.venue }}
+                            </p>
+            
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                {% if event.tickets.exists %}
+                                    {% with ticket=event.tickets.first %}
+                                    <span class="h5 fw-bold mb-0 text-dark">
+                                        {% if ticket.price == 0 %}
+                                            Free
+                                        {% else %}
+                                            ₦{{ ticket.price|floatformat:0|intcomma  }}
+                                        {% endif %}
+                                    </span>
+                                    {% endwith %}
+                                {% else %}
+                                    <span class="h5 fw-bold mb-0 text-muted small">TBA</span>
+                                {% endif %}
+                                <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm px-4 rounded-pill fw-bold">
+                                    Get Ticket
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="py-5">
+                        <i class="fa-solid fa-calendar-xmark fa-4x text-muted opacity-25 mb-4"></i>
+                        <h3 class="fw-800 text-dark">Oops! No events here</h3>
+                        <p class="text-muted mx-auto" style="max-width: 420px;">
+                            We couldn't find any events in the <strong>{{ selected_category.name|default:"selected" }}</strong> category right now.
+                        </p>
+                        <a href="{% url 'home' %}" class="btn btn-outline-purple rounded-pill px-4 mt-3 fw-800">
+                            Browse All Events
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div> -->
             
         </div>
     </section>
