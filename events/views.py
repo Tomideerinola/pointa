@@ -1,7 +1,7 @@
 import uuid
 import requests
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from django.utils import timezone
@@ -39,6 +39,13 @@ def home(request):
         date__gte=now
     ).order_by('date')[:6]
 
+        # OPTION B (if using Ticket model)
+    hot_events = events.filter(
+        date__gte=now
+    ).annotate(
+        total_sold=Sum('tickets__quantity_available')
+    ).order_by('-total_sold')[:4]
+
     # Past events (filtered if category selected)
     past_events = events.filter(
         date__lt=now
@@ -51,6 +58,7 @@ def home(request):
         "past": past_events,
         "categories": categories,
         "selected_category": selected_category,
+        "hot_events":hot_events,
     })
 
 def user_signup(request):
@@ -397,7 +405,7 @@ def booking_confirm(request, event_id):
 
         total_amount = ticket.price * quantity
 
-        # 🔥 Check if user already has a pending order for this event
+        # Check if user already has a pending order for this event
         existing_order = Order.objects.filter(
             user=request.user,
             event=event,
@@ -545,7 +553,7 @@ def my_events(request):
 
         for event in events:
 
-            # ✅ Total tickets available
+            # Total tickets available
             total_tickets = Ticket.objects.filter(
                 event=event
             ).aggregate(total=Sum('quantity_available'))
@@ -553,7 +561,7 @@ def my_events(request):
             event.total_tickets = total_tickets['total'] or 0
 
 
-            # ✅ Tickets sold
+            # Tickets sold
             sold = OrderItem.objects.filter(
                 order__event=event,
                 order__status="paid"
@@ -562,7 +570,7 @@ def my_events(request):
             event.tickets_sold = sold['total'] or 0
 
 
-            # ✅ Percentage
+            # Percentage
             if event.total_tickets > 0:
                 event.sold_percentage = int(
                     (event.tickets_sold / event.total_tickets) * 100
@@ -796,3 +804,7 @@ def newsletter_subscribe(request):
     return redirect(request.META.get('HTTP_REFERER', '/'))  # Redirect back to the page
 
 
+def about(request):
+    categories = Category.objects.all()
+
+    return render( request, 'events/about.html', {'categories':categories})

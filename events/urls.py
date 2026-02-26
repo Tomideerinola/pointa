@@ -32,4 +32,5 @@ urlpatterns = [
     path('profile-settings/', views.edit_profile, name='edit_profile'),
     path('event/<int:event_id>/toggle-save/', views.toggle_save_event, name='toggle_save_event'),
     path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
+    path('about/', views.about, name='about'),
 ]

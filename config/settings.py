@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -123,4 +123,9 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 PAYSTACK_SECRET_KEY="sk_test_f703ed91e65546ea1981ae553a470af6b61c7fb7"
+
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 
