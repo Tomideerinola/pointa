@@ -76,20 +76,41 @@
     
                 <!-- Auth buttons -->
                 <div class="d-flex align-items-center gap-2">
-                    {% if user.is_authenticated %}
+
+                    {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+                
                         {% if user.organizer %}
-                            <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">Dashboard</a>
+                            <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">
+                                Dashboard
+                            </a>
                         {% else %}
-                            <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">Hello, {{user.first_name|capfirst}}! 👋</a>
+                        <a href="{% url 'dashboard' %}" class="dashboard-user-pill">
+                            <div class="user-avatar-circle">
+                                <i class="fa-solid fa-user-astronaut"></i>
+                            </div>
+                            <span class="user-pill-text">Hello, {{ user.first_name|capfirst }}!</span>
+                            <i class="fa-solid fa-chevron-right ms-2 opacity-50" style="font-size: 10px;"></i>
+                        </a>
                         {% endif %}
+                
                         <form method="POST" action="{% url 'logout' %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger px-3">Logout</button>
+                            <button type="submit" class="btn btn-outline-danger px-3">
+                                Logout
+                            </button>
                         </form>
+                
                     {% else %}
-                        <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">Sign In</a>
-                        <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">Create Event</a>
+                
+                        <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">
+                            Sign In
+                        </a>
+                        <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">
+                            Create Event
+                        </a>
+                
                     {% endif %}
+                
                 </div>
             </div>
         </div>

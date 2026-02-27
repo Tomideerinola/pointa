@@ -203,15 +203,17 @@ def dashboard(request):
     # Upcoming Events (based on date)
 
     upcoming_events = Event.objects.filter(
-        date__gte=now  # Event date greater than or equal to now
-    ).order_by('date')[:3]  # Show only 3 on dashboard
+        order__user=user,
+        order__status="paid",
+        date__gte=now
+    ).distinct().order_by("date")[:3]
 
-
-    # Past Events
-
+    # Past events user booked
     past_events = Event.objects.filter(
+        order__user=user,
+        order__status="paid",
         date__lt=now
-    ).order_by('-date')[:3]
+    ).distinct().order_by("-date")[:3]
 
 
     # Saved Events Count
@@ -298,6 +300,7 @@ def organizer_login(request):
 
 
 def events_list(request):
+    now = timezone.now()
 
     # Start with active events
     events = Event.objects.filter(status="active")
@@ -310,9 +313,7 @@ def events_list(request):
 
     selected_categories = None
 
-    if category_id:
-        events = events.filter(category_id=category_id)
-        selected_categories = Category.objects.filter(id=category_id).first()
+
 
     # 🔎 Search by name or category name
     if q:
@@ -328,18 +329,36 @@ def events_list(request):
     #  Filter by category (dropdown)
     if category_id:
         events = events.filter(category_id=category_id)
+        selected_categories = Category.objects.filter(id=category_id).first()
 
     # Filter by multiple checkbox locations
     if locations:
         events = events.filter(state__in=locations)
 
-    events = events.order_by("-date")
+    upcoming_events = events.filter(
+        date__gte=now
+    ).order_by("date")
+
+    # Popular Events (most booked)
+    popular_events = events.filter(
+        date__gte=now
+    ).annotate(
+        order_count=Count("order")
+    ).order_by("-order_count", "date")[:3]
+
+    #  Recently Added
+    recent_events = events.filter(
+        date__gte=now
+    ).order_by("-created_at")[:4]
 
     categories = Category.objects.all()
     available_locations = [choice[0] for choice in Event.STATE_CHOICES]
 
     return render(request, "events/events_list.html", {
         "events": events,
+        "upcoming_events": upcoming_events,
+        "recent_events": recent_events,
+        "popular_events":popular_events,
         "categories": categories,
         "selected_category": category_id,
         "selected_locations": locations,

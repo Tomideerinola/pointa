@@ -10,7 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Outfit:wght@800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon/favicon.ico' %}">
-
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
     
     <style>
         :root { --p-purple: #6f42c1;
@@ -758,10 +759,190 @@ TABLETS & MEDIUM DEVICES
         margin-bottom: -250px;
     }
 }
+
+
+
+.dashboard-user-pill {
+        display: inline-flex;
+        align-items: center;
+        background: #f8fafc; /* Very light grey */
+        border: 1px solid #e2e8f0;
+        padding: 6px 16px 6px 8px;
+        border-radius: 100px;
+        text-decoration: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #0f172a !important;
+    }
+
+    .user-avatar-circle {
+        width: 32px;
+        height: 32px;
+        background: var(--primary-purple);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-size: 0.8rem;
+        box-shadow: 0 4px 10px rgba(109, 40, 217, 0.2);
+    }
+
+    .user-pill-text {
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    /* The "Alive" Hover State */
+    .dashboard-user-pill:hover {
+        background: #ffffff;
+        border-color: var(--primary-purple);
+        box-shadow: 0 10px 20px rgba(109, 40, 217, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .dashboard-user-pill:hover .user-avatar-circle {
+        transform: scale(1.1) rotate(-10deg);
+        background: #5b21b6; /* Slightly darker purple on hover */
+    }
+
+    .dashboard-user-pill:active {
+        transform: translateY(0);
+    }
+
+
+
+    /* section stylings  */
+
+    /* Section Headers */
+    .section-title-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+    .section-tag {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--primary-purple);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    /* Popular Card Special Styling */
+    .popular-card {
+        border-radius: 24px;
+        overflow: hidden;
+        background: white;
+        border: 1px solid #f1f5f9;
+        transition: all 0.4s ease;
+        position: relative;
+    }
+    .popular-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(109, 40, 217, 0.12);
+    }
+    .trending-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(8px);
+        color: #fbbf24;
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-size: 11px;
+        font-weight: 800;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    /* Recent Card Special Styling */
+    .recent-card {
+        display: flex;
+        flex-direction: column;
+        border-radius: 20px;
+        background: #f8fafc;
+        border: 1px dashed #e2e8f0;
+        padding: 12px;
+        transition: 0.3s;
+    }
+    .recent-card:hover {
+        background: white;
+        border-style: solid;
+        border-color: var(--primary-purple);
+    }
+    .new-label {
+        background: var(--primary-purple);
+        color: white;
+        font-size: 10px;
+        padding: 2px 10px;
+        border-radius: 4px;
+        font-weight: 700;
+    }
+
+
+
+
+
+
+
+
+    .fw-900 { font-weight: 900; }
+    
+    .text-gradient-purple {
+        background: linear-gradient(135deg, #6d28d9 0%, #a21caf 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .letter-spacing-2 {
+        letter-spacing: 2.5px;
+    }
+
+    /* Live Pulse Indicator */
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #6d28d9;
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .pulse-dot::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #6d28d9;
+        border-radius: 50%;
+        animation: indicator-pulse 2s infinite;
+    }
+
+    @keyframes indicator-pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.6;
+        }
+        100% {
+            transform: scale(3.5);
+            opacity: 0;
+        }
+    }
+    
+    /* Responsive adjustment */
+    @media (max-width: 768px) {
+        .letter-spacing-2 { letter-spacing: 1px; }
+    }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg sticky-top">
+
         <div class="container">
             <a class="navbar-brand-custom" href="{%url 'home'%}">
                 <span style="color: var(--primary-purple); line-height: 0;">
@@ -782,6 +963,10 @@ TABLETS & MEDIUM DEVICES
                 <span class="brand-text">Pointa</span>
 
             </a>
+                                <!-- Hamburger toggle button for mobile -->
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPointa" aria-controls="navPointa" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
             <div class="collapse navbar-collapse" id="navPointa">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link px-3" href="{%url 'events_list'%}">Browse Events</a></li>
@@ -798,7 +983,7 @@ TABLETS & MEDIUM DEVICES
                     </li> -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle px-3" href="#" id="catDrop" role="button" data-bs-toggle="dropdown">
-                            {% if selected_category %}{{ selected_category.name }}{% else %}Categories{% endif %}
+                            {% if selected_categories %}{{ selected_categories.name }}{% else %}Categories{% endif %}
                         </a>
                         <ul class="dropdown-menu border-0 shadow-sm mt-3" aria-labelledby="catDrop">
                             <!-- All Categories link -->
@@ -825,39 +1010,41 @@ TABLETS & MEDIUM DEVICES
                     <li class="nav-item"><a class="nav-link px-3" href="{%url 'contact'%}">Contact</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-2">
-                    <!-- <a href="{%url 'user_login'%}" class="btn text-dark fw-bold px-3">Sign In</a>
-                    <a href="{%url 'create_event'%}" class="btn btn-purple shadow-sm px-4">Create Event</a> -->
-                    {% if user.is_authenticated %}
 
-    {% if user.organizer %}
-        <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">
-            Dashboard
-        </a>
-    {% else %}
-        <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">
-            My Account
-        </a>
-    {% endif %}
-
-    <form method="POST" action="{% url 'logout' %}" class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-danger px-3">
-            Logout
-        </button>
-    </form>
-
-{% else %}
-
-    <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">
-        Sign In
-    </a>
-
-    <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">
-        Create Event
-    </a>
-
-{% endif %}
-
+                    {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+                
+                        {% if user.organizer %}
+                            <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">
+                                Dashboard
+                            </a>
+                        {% else %}
+                        <a href="{% url 'dashboard' %}" class="dashboard-user-pill">
+                            <div class="user-avatar-circle">
+                                <i class="fa-solid fa-user-astronaut"></i>
+                            </div>
+                            <span class="user-pill-text">Hello, {{ user.first_name|capfirst }}!</span>
+                            <i class="fa-solid fa-chevron-right ms-2 opacity-50" style="font-size: 10px;"></i>
+                        </a>
+                        {% endif %}
+                
+                        <form method="POST" action="{% url 'logout' %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger px-3">
+                                Logout
+                            </button>
+                        </form>
+                
+                    {% else %}
+                
+                        <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">
+                            Sign In
+                        </a>
+                        <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">
+                            Create Event
+                        </a>
+                
+                    {% endif %}
+                
                 </div>
             </div>
         </div>
@@ -943,51 +1130,33 @@ TABLETS & MEDIUM DEVICES
                     </div>
                 </form>
 
-
-
-
-
-                <!-- <div class="filter-card">
-                    <h5 class="filter-title">Filter By</h5>
-                    
-                    <div class="mb-4">
-                        <label class="fw-bold small text-uppercase mb-2 d-block text-muted">Category</label>
-                        <select class="form-select border-0 bg-light rounded-3">
-                            <option>All Categories</option>
-                            <option>Conferences</option>
-                            <option>Music</option>
-                            <option>Tech Workshops</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="fw-bold small text-uppercase mb-2 d-block text-muted">Location</label>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="loc1">
-                            <label class="form-check-label small" for="loc1">Lagos</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="loc2">
-                            <label class="form-check-label small" for="loc2">Abuja</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="loc3">
-                            <label class="form-check-label small" for="loc3">Port Harcourt</label>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-purple w-100 rounded-3 py-2 fw-bold" style="background: var(--p-purple); color: white;">Apply Filters</button>
-                </div> -->
             </div>
 
             <div class="col-lg-9">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-800 mb-0" style="font-family: 'Outfit';">Upcoming Events</h4>
-                    <span class="text-muted small fw-bold">{{ events|length }} Events found</span>
+                <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <span class="section-tag">Upcoming Events</span>
+
+                    <span class="text-muted small fw-bold">{{ upcoming_events|length }} Events found</span>
+                </div> -->
+
+                <div class="section-title-wrapper">
+                    <div>
+                        <span class="section-tag">Upcoming Events</span>
+                        <!-- <h2 class="fw-800 display-6" style="letter-spacing: -1.5px;"></h2> -->
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 40px; height: 2px; background: var(--primary-purple); margin-right: 12px;"></div>
+                            <span class="text-purple fw-800 small text-uppercase letter-spacing-2">Next on the Radar</span>
+                        </div>
+                    </div>
+                    <div class="d-none d-md-flex align-items-center bg-soft-purple px-4 py-2 rounded-pill">
+                        <div class="pulse-dot me-2"></div>
+                        <span class="small fw-800 text-purple text-uppercase">Upcoming in {{ city|default:"your city" }}</span>
+                    </div>
                 </div>
 
                 <div class="row g-4">
-                    {% for event in events %}
+                    {% for event in upcoming_events %}
                     <div class="col-md-6 col-xl-4">
                         <div class="event-card">
                             <div class="card-img-wrapper">
@@ -1035,8 +1204,164 @@ TABLETS & MEDIUM DEVICES
                     </div>
                     {% endfor %}
                 </div>
+
+                {% if popular_events %}
+<section class="mb-5 pb-5 mt-5">
+    <div class="section-title-wrapper">
+        <div>
+            <span class="section-tag">Hot & Trending</span>
+            <!-- <h2 class="fw-800 display-6" style="letter-spacing: -1.5px;"></h2> -->
+            <div class="d-flex align-items-center mb-2">
+                <div style="width: 40px; height: 2px; background: var(--primary-purple); margin-right: 12px;"></div>
+                <span class="text-purple fw-800 small text-uppercase letter-spacing-2">Most Wanted Experiences</span>
             </div>
         </div>
+        <div class="d-none d-md-flex align-items-center bg-soft-purple px-4 py-2 rounded-pill">
+            <div class="pulse-dot me-2"></div>
+            <span class="small fw-800 text-purple text-uppercase">Trending in {{ city|default:"your city" }}</span>
+        </div>
+    </div>
+
+
+
+    <div class="row g-4">
+        {% for event in popular_events %}
+        <div class="col-md-6 col-xl-4">
+            <div class="popular-card h-100">
+                <div class="trending-badge">
+                    <i class="fa-solid fa-fire-flame-curved"></i> 
+                    POPULAR
+                </div>
+                
+                <div class="card-img-wrapper" style="height: 220px;">
+                    <div class="price-tag">
+                        {% if event.tickets.all %}
+                            ₦{{ event.tickets.first.price|floatformat:0|intcomma }}
+                        {% else %}
+                            Free
+                        {% endif %}
+                    </div>
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ event.title }}">
+                    {% endif %}
+                </div>
+
+                <div class="p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-soft-purple text-purple rounded-pill px-3">{{ event.category.name }}</span>
+                        <small class="text-muted fw-bold"><i class="fa-solid fa-users me-1"></i> {{ event.order_count }} joined</small>
+                    </div>
+                    <h4 class="fw-800 mb-3" style="font-size: 1.25rem;">{{ event.title }}</h4>
+                    
+                    <div class="event-meta small text-muted mb-2">
+                        <i class="fa-solid fa-calendar text-purple me-2"></i> {{ event.date|date:"D, d M" }}
+                    </div>
+                    <div class="event-meta small text-muted mb-4">
+                        <i class="fa-solid fa-location-dot text-purple me-2"></i> {{ event.city }}
+                    </div>
+
+                    <a href="{% url 'event_detail' event.id %}" class="btn-view">Secure Your Spot</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+
+
+{% if recent_events %}
+<section class="mb-5">
+    <!-- <div class="section-title-wrapper">
+        <div>
+            <span class="section-tag">Just In</span>
+            <h2 class="fw-800 display-6" style="letter-spacing: -1.5px;">Recently Published</h2>
+        </div>
+    </div> -->
+
+    <div class="section-title-wrapper">
+        <div>
+
+            <span class="section-tag">Just In</span>
+
+            <div class="d-flex align-items-center mb-2">
+                <div style="width: 40px; height: 2px; background: var(--primary-purple); margin-right: 12px;"></div>
+                <span class="text-purple fw-800 small text-uppercase letter-spacing-2">The Latest Drops</span>
+            </div>
+        </div>
+        <div class="d-none d-md-flex align-items-center bg-soft-purple px-4 py-2 rounded-pill">
+            <div class="pulse-dot me-2"></div>
+            <span class="small fw-800 text-purple text-uppercase">Recently added in {{ city|default:"your city" }}</span>
+        </div>
+    </div>
+
+
+    <div class="row g-4">
+        {% for event in recent_events %}
+        <div class="col-md-6 col-lg-4 col-xl-4">
+            <div class="recent-card h-100">
+                <div class="position-relative">
+                    <img src="{{ event.image.url }}" class="rounded-4 w-100" style="height: 180px; object-fit: cover;" alt="{{ event.title }}">
+                    <div class="position-absolute bottom-0 start-0 p-3">
+                        <span class="new-label">NEWLY ADDED</span>
+                    </div>
+                </div>
+                
+                <div class="pt-3 px-2">
+                    <h5 class="fw-800 mb-1 text-truncate">{{ event.title }}</h5>
+                    <p class="text-muted small mb-3"><i class="fa-solid fa-map-pin me-1"></i> {{ event.venue }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-purple fw-800">
+                            {% if event.tickets.all %}
+                                ₦{{ event.tickets.first.price|floatformat:0|intcomma }}
+                            {% else %}
+                                Free
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'event_detail' event.id %}" class="btn btn-link text-dark fw-800 text-decoration-none p-0">
+                            View <i class="fa-solid fa-arrow-right ms-1" style="font-size: 10px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="contact-widget">
+        <div class="contact-card shadow-lg d-none" id="contactCard">
+            <div class="contact-header">
+                <h6 class="mb-0 fw-800 text-white">Need help?</h6>
+                <button class="btn-close btn-close-white small" onclick="toggleContact()"></button>
+            </div>
+            <div class="contact-body p-3">
+                <p class="small text-muted mb-3">Reach out to our team and we'll get back to you shortly.</p>
+                <a href="https://wa.me/07039853440" class="contact-method">
+                    <div class="icon-box whatsapp"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div>
+                        <span class="d-block fw-bold">WhatsApp</span>
+                        <span class="small text-muted">Instant response</span>
+                    </div>
+                </a>
+                <a href="mailto:support@pointa.com" class="contact-method mt-2">
+                    <div class="icon-box email"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                        <span class="d-block fw-bold">Email Support</span>
+                        <span class="small text-muted">Response in 24hrs</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    
+        <button class="fab-btn shadow-lg" onclick="toggleContact()">
+            <i class="fa-solid fa-message"></i>
+        </button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
