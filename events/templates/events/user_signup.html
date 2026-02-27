@@ -90,7 +90,19 @@
 <body>
     <div class="auth-split">
         <div class="auth-form-container">
-            <a href="index.html" class="brand-logo">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <a href="{% url 'home' %}" class="text-decoration-none d-flex align-items-center text-muted fw-bold small transition-all hover-purple">
+                    <i class="fa-solid fa-arrow-left me-2" style="font-size: 12px;"></i>
+                    Back to Home
+                </a>
+            
+                <span class="badge px-3 py-2 rounded-pill d-flex align-items-center" 
+                      style="font-size: 10px; background: var(--light-purple); color: var(--primary-purple); letter-spacing: 0.5px; font-weight: 800;">
+                    <i class="fa-solid fa-circle me-1" style="font-size: 6px;"></i>
+                    USER SIGNUP
+                </span>
+            </div>
+            <a href="{%url 'home'%}" class="brand-logo">
                 <span style="color: var(--primary-purple); line-height: 0;">
                     <svg width="40" height="40" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_18078_104881)">
@@ -106,7 +118,7 @@
                     </svg>
                 </span>
                 <span style="background: linear-gradient(45deg, var(--primary-purple), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pointa</span>
-            <span class="badge ms-2" style="font-size: 10px; background: var(--light-purple); color: var(--primary-purple);">User</span>
+            <!-- <span class="badge ms-2" style="font-size: 10px; background: var(--light-purple); color: var(--primary-purple);">User</span> -->
 
             </a>
             <h2 class="fw-800 mb-2">Join the Community</h2>
@@ -173,7 +185,7 @@
                 <button type="submit" class="btn-auth mb-4">Create Account</button>
             </form>
     
-            <p class="text-center text-muted">Want to host events? <a href="signup-organizer.html" class="text-purple fw-bold text-decoration-none">Register as Organizer</a></p>
+            <p class="text-center text-muted">Want to host events? <a href="{%url 'organizer_signup'%}" class="text-purple fw-bold text-decoration-none">Register as Organizer</a></p>
         </div>
         
         <div class="auth-visual" style="background-image: linear-gradient(rgba(111, 66, 193, 0.4), rgba(15, 8, 26, 0.9)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=80');">

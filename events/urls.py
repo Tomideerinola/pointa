@@ -24,7 +24,7 @@ urlpatterns = [
     path('delete/<int:pk>/',views.delete_event,name='delete_event'),
     path("org/profile/",views.organizer_profile,name="organizer_profile"),
     path('organizer/tickets/', views.organizer_tickets, name='organizer_tickets'),
-    path('org/payouts/', views.payout, name='payout'),
+    path('org/payouts/', views.payouts, name='payouts'),
     path('upcoming-events/', views.upcoming_events, name='upcoming_events'),
     path('my_tickets/', views.my_tickets, name='my_tickets'),
     path('past_events/', views.past_events, name='past_events'),
@@ -33,4 +33,5 @@ urlpatterns = [
     path('event/<int:event_id>/toggle-save/', views.toggle_save_event, name='toggle_save_event'),
     path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
     path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
 ]

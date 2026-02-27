@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Outfit:wght@800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --pointa-purple: #6f42c1; }
+        :root { --pointa-purple: #6f42c1;--primary-purple: #6f42c1; }
         
         /* Ensure full height for the entire page */
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
@@ -160,7 +160,19 @@
     
     <section class="login-pane">
         <div class="form-content">
-            <a href="/" class="brand-header">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <a href="{% url 'home' %}" class="text-decoration-none d-flex align-items-center text-muted fw-bold small transition-all hover-purple">
+                    <i class="fa-solid fa-arrow-left me-2" style="font-size: 12px;"></i>
+                    Back to Home
+                </a>
+            
+                <span class="badge px-3 py-2 rounded-pill d-flex align-items-center" 
+                      style="font-size: 10px; background: var(--light-purple); color: var(--primary-purple); letter-spacing: 0.5px; font-weight: 800;">
+                    <i class="fa-solid fa-circle me-1" style="font-size: 6px;"></i>
+                    ORGANIZER LOGIN
+                </span>
+            </div>
+            <a href="{%url 'home'%}" class="brand-header">
                 <svg width="45" height="45" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="34" height="34" rx="10" fill="#6f42c1"/>
                     <path d="M16.1238 20.1522C16.511 19.662 17.2479 19.6428 17.66 20.1122L20.5526 23.41C21.1194 24.0563 20.6611 25.0689 19.8016 25.0692H14.3055C13.47 25.0692 13.0026 24.1059 13.5203 23.4501L16.1238 20.1522ZM16.1326 8.45497C16.5308 7.95801 17.286 7.95453 17.6883 8.44813L27.5164 20.5077C28.0488 21.161 27.5838 22.1395 26.741 22.1395H24.4442C24.1428 22.1395 23.8577 22.0034 23.6678 21.7694L17.7029 14.4188C17.2962 13.9175 16.5285 13.927 16.1346 14.4384L10.7303 21.454C10.5411 21.6996 10.2484 21.8435 9.9383 21.8436H7.4881C6.64925 21.8436 6.18332 20.8733 6.70783 20.2186L16.1326 8.45497Z" fill="white" />

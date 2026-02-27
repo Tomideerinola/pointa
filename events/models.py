@@ -209,6 +209,7 @@ class Ticket(models.Model):
     name = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity_available = models.PositiveIntegerField()
+    quantity_sold = models.PositiveIntegerField(default=0)  # ADD THIS
 
     def __str__(self):
         return f"{self.name} - {self.event.title}"
@@ -347,3 +348,44 @@ class NewsletterEmail(models.Model):
 
     def __str__(self):
         return self.email
+    
+
+class Payout(models.Model):
+    """
+    Stores payout requests made by organizers
+    """
+
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('paid', 'Paid'),
+        ('rejected', 'Rejected'),
+    )
+
+    organizer = models.ForeignKey(
+        Organizer,
+        on_delete=models.CASCADE,
+        related_name='payouts'
+    )
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+    reference = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.organizer.user.username} - {self.amount} - {self.status}"

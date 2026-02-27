@@ -74,25 +74,44 @@
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link px-3" href="{%url 'about'%}">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="{%url 'contact'%}">Contact</a></li>
+
+
                 </ul>
     
                 <!-- Auth buttons -->
                 <div class="d-flex align-items-center gap-2">
-                    {% if user.is_authenticated %}
+
+                    {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+                
                         {% if user.organizer %}
-                            <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">Dashboard</a>
+                            <a href="{% url 'org_dashboard' %}" class="btn text-dark fw-bold px-3">
+                                Dashboard
+                            </a>
                         {% else %}
-                            <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">Hello, {{user.first_name|capfirst}}! 👋</a>
+                            <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">
+                                Hello, {{ user.first_name|capfirst }}! 👋
+                            </a>
                         {% endif %}
+                
                         <form method="POST" action="{% url 'logout' %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger px-3">Logout</button>
+                            <button type="submit" class="btn btn-outline-danger px-3">
+                                Logout
+                            </button>
                         </form>
+                
                     {% else %}
-                        <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">Sign In</a>
-                        <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">Create Event</a>
+                
+                        <a href="{% url 'user_login' %}" class="btn text-dark fw-bold px-3">
+                            Sign In
+                        </a>
+                        <a href="{% url 'organizer_signup' %}" class="btn btn-purple shadow-sm px-4">
+                            Create Event
+                        </a>
+                
                     {% endif %}
+                
                 </div>
             </div>
         </div>
@@ -187,54 +206,7 @@
                 </div>
             </div>
     
-            <!-- <div class="row g-4">
-                {% for event in events %}
-                <div class="col-lg-4 col-md-6">
-                    <div class="card event-card h-100 p-3">
-                        <div class="position-relative">
-                            {% if event.image %}
-                            <img src="{{ event.image.url }}" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
-                            {% else %}
-                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
-                            {% endif %}
-                            {% if event.status == "active" %}
-                            <span class="badge position-absolute top-0 end-0 m-3 bg-white text-dark shadow-sm px-3 py-2 rounded-pill small fw-bold">
-                                {{ event.event_type|title }}
-                            </span>
-                            {% endif %}
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="badge badge-purple">{{ event.category.name }}</span>
-                                <span class="text-muted fw-bold small">{{ event.date|date:"M d" }}</span>
-                            </div>
-                            <h5 class="fw-bold">{{ event.title }}</h5>
-                            <p class="text-muted small mb-3">
-                                <i class="fa-solid fa-location-dot me-1 text-purple"></i> {{ event.venue }}
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                {% if event.tickets.exists %}
-                                    {% with ticket=event.tickets.first %}
-                                    <span class="h5 fw-bold mb-0 text-purple">
-                                        {% if ticket.price == 0 %}
-                                            Free
-                                        {% else %}
-                                            ₦{{ ticket.price|floatformat:0|intcomma }}
-                                        {% endif %}
-                                    </span>
-                                    {% endwith %}
-                                {% else %}
-                                    <span class="h5 fw-bold mb-0 text-purple">TBA</span>
-                                {% endif %}
-                                <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm px-4">View Event</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <p class="text-muted fw-bold">No events found.</p>
-                {% endfor %}
-            </div> -->
+
 
             <div class="row g-4">
                 {% for event in upc %}
@@ -295,71 +267,6 @@
             </div>
 
 
-            <!-- <div class="row g-4">
-                {% for event in upc %}
-                <div class="col-lg-4 col-md-6">
-                    <div class="card event-card h-100 p-3 shadow-sm border-0" style="border-radius: 20px;">
-                        <div class="position-relative">
-                            {% if event.image %}
-                                <img src="{{ event.image.url }}" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
-                            {% else %}
-                                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" class="rounded-4 mb-3 w-100" height="220" style="object-fit: cover;">
-                            {% endif %}
-                            
-                            {% if event.status == "active" %}
-                            <span class="badge position-absolute top-0 end-0 m-3 bg-white text-dark shadow-sm px-3 py-2 rounded-pill small fw-bold">
-                                {{ event.event_type|title }}
-                            </span>
-                            {% endif %}
-                        </div>
-            
-                        <div class="card-body p-0">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="badge badge-purple bg-soft-purple text-purple">{{ event.category.name }}</span>
-                                <span class="text-muted fw-bold small">{{ event.date|date:"M d" }}</span>
-                            </div>
-                            
-                            <h5 class="fw-bold mb-1">{{ event.title }}</h5>
-                            <p class="text-muted small mb-3">
-                                <i class="fa-solid fa-location-dot me-1 text-purple"></i> {{ event.venue }}
-                            </p>
-            
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                {% if event.tickets.exists %}
-                                    {% with ticket=event.tickets.first %}
-                                    <span class="h5 fw-bold mb-0 text-dark">
-                                        {% if ticket.price == 0 %}
-                                            Free
-                                        {% else %}
-                                            ₦{{ ticket.price|floatformat:0|intcomma  }}
-                                        {% endif %}
-                                    </span>
-                                    {% endwith %}
-                                {% else %}
-                                    <span class="h5 fw-bold mb-0 text-muted small">TBA</span>
-                                {% endif %}
-                                <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm px-4 rounded-pill fw-bold">
-                                    Get Ticket
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="col-12 text-center py-5">
-                    <div class="py-5">
-                        <i class="fa-solid fa-calendar-xmark fa-4x text-muted opacity-25 mb-4"></i>
-                        <h3 class="fw-800 text-dark">Oops! No events here</h3>
-                        <p class="text-muted mx-auto" style="max-width: 420px;">
-                            We couldn't find any events in the <strong>{{ selected_category.name|default:"selected" }}</strong> category right now.
-                        </p>
-                        <a href="{% url 'home' %}" class="btn btn-outline-purple rounded-pill px-4 mt-3 fw-800">
-                            Browse All Events
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div> -->
             
         </div>
     </section>
@@ -399,12 +306,16 @@
                                     <h5 class="fw-bold mb-1 text-truncate">{{ event.title }}</h5>
                                     <p class="text-muted small mb-2">
                                         <i class="fa-solid {% if event.is_online %}fa-video{% else %}fa-location-dot{% endif %} me-1"></i> 
-                                        {{ event.location|default:"Online" }}
+                                        {{ event.venue|default:"Online" }}
                                     </p>
             
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-bold text-purple">
-                                            {% if event.price > 0 %}₦{{ event.price }}{% else %}Free{% endif %}
+                                            {% if event.min_price and event.min_price > 0 %}
+                                                    From ₦{{ event.min_price|intcomma }}
+                                                {% else %}
+                                                    Free
+                                                {% endif %}
                                         </span>
                                         <a href="{% url 'event_detail' event.id %}" class="btn btn-purple btn-sm rounded-pill px-3 shadow-sm">
                                             Grab a Spot
@@ -464,7 +375,7 @@
                             </div>
     
                             <div class="d-flex align-items-center gap-4">
-                                <a href="{% url 'organizer_signup' %}" class="btn-create-event">Get Started</a>
+                                <a href="{% url 'org_dashboard' %}" class="btn-create-event">Get Started</a>
                                 <a href="#" class="text-dark fw-bold text-decoration-none">Learn More <i class="fa-solid fa-chevron-right ms-1 small"></i></a>
                             </div>
                         </div>
@@ -473,6 +384,7 @@
             </div>
         </div>
     </section>
+    
     <footer class="footer-section">
 
         <div class="container">
@@ -516,18 +428,18 @@
                 <div class="col-6 col-md-4 col-lg-2">
                     <h5>Discover</h5>
                     <div class="d-flex flex-column">
-                        <a href="#" class="footer-link">Concerts & Raves</a>
-                        <a href="#" class="footer-link">Owambe Hub</a>
-                        <a href="#" class="footer-link">Tech Summits</a>
+                        <a href="{% url 'events_list' %}" class="footer-link">Concerts & Raves</a>
+                        <a href="{% url 'events_list' %}" class="footer-link">Owambe Hub</a>
+                        <a href="{% url 'events_list' %}" class="footer-link">Tech Summits</a>
                     </div>
                 </div>
     
                 <div class="col-6 col-md-4 col-lg-2">
                     <h5>Platform</h5>
                     <div class="d-flex flex-column">
-                        <a href="#" class="footer-link">How it works</a>
-                        <a href="#" class="footer-link">Pricing</a>
-                        <a href="#" class="footer-link">Help Center</a>
+                        <a href="{%url 'about'%}" class="footer-link">How it works</a>
+                        <a href="{%url 'about'%}" class="footer-link">About Us</a>
+                        <a href="{%url 'contact'%}" class="footer-link">Help Center</a>
                     </div>
                 </div>
     
@@ -559,6 +471,7 @@
                 </div>
             </div>
         </div>
+        
     </footer>
     <script>
 // Updated Counter Script to handle the "rolling" effect better

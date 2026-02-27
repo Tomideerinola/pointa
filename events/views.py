@@ -1,7 +1,8 @@
 import uuid
 import requests
 from django.conf import settings
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Value, Min, DecimalField
+from django.db.models.functions import Coalesce
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from django.utils import timezone
@@ -12,7 +13,7 @@ from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, Event
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem, SavedEvent, Category
+from .models import Organizer, Profile, Event, Ticket, Order, Attendee, OrderItem, SavedEvent, Category, Payout
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -43,8 +44,9 @@ def home(request):
     hot_events = events.filter(
         date__gte=now
     ).annotate(
-        total_sold=Sum('tickets__quantity_available')
-    ).order_by('-total_sold')[:4]
+        total_sold=Coalesce(Sum('tickets__quantity_sold'), Value(0)),
+        min_price=Min('tickets__price')   
+    ).order_by('-total_sold', '-created_at')[:4]
 
     # Past events (filtered if category selected)
     past_events = events.filter(
@@ -135,11 +137,14 @@ def org_dashboard(request):
     Organizer dashboard view.
     Shows stats: total events, total attendees, total revenue, and recent registrations
     """
-    try:
-        org = request.user.organizer
-    except Organizer.DoesNotExist:
-        return redirect('organizer_login')  # redirect if user is not an organizer
+        # 1. Check if the logged-in user is actually an organizer
+    if not hasattr(request.user, "organizer"):
+        messages.error(request, "Access denied. Only organizers can access this page.")
+        return redirect("home")
 
+
+
+    org = request.user.organizer
     # All events by this organizer
     events = Event.objects.filter(organizer=org)
 
@@ -177,6 +182,16 @@ def organizer_logout(request):
 # user dashboard view 
 @login_required
 def dashboard(request):
+
+        #  Block superusers (admin)
+    if request.user.is_superuser:
+        messages.error(request, "Admins cannot access user dashboard.")
+        return redirect("home")
+
+    #  Block organizers
+    if hasattr(request.user, "organizer"):
+        messages.error(request, "Organizers cannot access user dashboard.")
+        return redirect("home")
 
     # Get current logged in user
     user = request.user
@@ -380,13 +395,33 @@ def booking_confirm(request, event_id):
             "You need to login before booking an event."
         )
 
+
         # Get login URL dynamically
         login_url = reverse("user_login")
                 # Redirect to login with next parameter
         return redirect(f"{login_url}?next={request.path}")
-
-
+    
     event = get_object_or_404(Event, id=event_id)
+
+
+        # Prevent admin from booking
+    if request.user.is_staff or request.user.is_superuser:
+        messages.error(request, "Admins cannot book events.")
+        return redirect("event_detail", event_id=event_id)
+
+    # Prevent organizer from booking their own event
+# If the user is an organizer
+    if hasattr(request.user, "organizer"):
+        # Check if the event belongs to them
+        if event.organizer == request.user.organizer:
+            messages.error(request, "You cannot book your own event.")
+            return redirect("event_detail", event_id=event_id)
+        else:
+            # Optionally block them from booking any other events too
+            messages.error(request, "Organizers cannot book events.")
+            return redirect("event_detail", event_id=event_id)
+
+
 
     if request.method == "POST":
         ticket_id = request.POST.get("ticket_id")
@@ -581,8 +616,6 @@ def my_events(request):
         return render(request, 'events/my_events.html', {"events":events, "now": timezone.now()})
 
 
-
-
 def edit_event(request, pk):
     try:
         org = request.user.organizer
@@ -683,13 +716,6 @@ def organizer_tickets(request):
     }
 
     return render(request, "events/organizer_tickets.html", context)
-
-
-
-
-def payout(request):
-    return render(request,'events/payouts.html')
-
 
 
 @login_required
@@ -808,3 +834,84 @@ def about(request):
     categories = Category.objects.all()
 
     return render( request, 'events/about.html', {'categories':categories})
+
+def contact(request):
+    categories = Category.objects.all()
+
+    return render( request, 'events/contact.html', {'categories':categories})
+
+
+@login_required(login_url='organizer_login')  #  User must be logged in first
+def payouts(request):
+
+    # 🔐 STEP 1: Ensure ONLY organizers can access this page
+    # If user does not have an Organizer profile, redirect them
+    if not hasattr(request.user, "organizer"):
+        messages.error(request, "Only organizers can access payouts.")
+        return redirect("home")
+
+    # Get the organizer object linked to the logged-in user
+    organizer = request.user.organizer
+
+    # 🔢 STEP 2: Calculate TOTAL earnings from PAID orders only
+    # We filter orders:
+    # - That belong to events created by this organizer
+    # - That have status = "paid"
+    total_earnings = Order.objects.filter(
+        event__organizer=organizer,  # Orders for this organizer's events
+        status="paid"  # Only successful payments
+    ).aggregate(
+        total=Coalesce(
+            Sum("total_amount"),  # Add up total_amount
+            0,  # If no orders exist, return 0 instead of None
+            output_field=DecimalField()
+        )
+    )["total"]
+
+    #  STEP 3: Calculate how much has ALREADY been paid out
+    # Only include payouts that have status = "paid"
+    total_paid_out = Payout.objects.filter(
+        organizer=organizer,
+        status="paid"
+    ).aggregate(
+        total=Coalesce(
+            Sum("amount"),
+            0,
+            output_field=DecimalField()
+        )
+    )["total"]
+
+    #  STEP 4: Available balance = earnings - already paid payouts
+    available_balance = total_earnings - total_paid_out
+
+    #  STEP 5: Handle payout request submission (POST request)
+    if request.method == "POST":
+
+        # Prevent payout if balance is zero or negative
+        if available_balance <= 0:
+            messages.error(request, "You have no available balance.")
+            return redirect("payouts")
+
+        # Create new payout request with full available balance
+        Payout.objects.create(
+            organizer=organizer,
+            amount=available_balance,
+            status="pending"  # Default is pending approval
+        )
+
+        messages.success(request, "Payout request submitted successfully.")
+        return redirect("payouts")
+
+    #  STEP 6: Fetch payout history for this organizer
+    payout_history = Payout.objects.filter(
+        organizer=organizer
+    ).order_by("-created_at")  # Show newest first
+
+    #  STEP 7: Send data to template
+    context = {
+        "available_balance": available_balance,
+        "total_earnings": total_earnings,
+        "payout_history": payout_history,
+    }
+
+    return render(request, "events/payouts.html", context)

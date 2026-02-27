@@ -31,11 +31,15 @@ body {
     text-decoration: none !important;
 }
 
+
+
 .brand-text {
     background: linear-gradient(45deg, var(--primary-purple), #a855f7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+
 
 /* HERO SECTION - REWORKED OVERLAY */
 .hero {
@@ -615,3 +619,92 @@ border-bottom: none;
 .text-purple {
     color: #6f42c1;
 }
+
+
+
+/* message modal styling  */
+        /* Widget Container */
+        .contact-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+        
+        /* Floating Button */
+        .fab-btn {
+            width: 60px;
+            height: 60px;
+            background: #6f42c1;
+            color: white;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        
+        .fab-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: #5a32a3;
+        }
+        
+        /* Contact Card */
+        .contact-card {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 280px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .contact-header {
+            background: #6f42c1;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .contact-method {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #1a1a2e;
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+        
+        .contact-method:hover {
+            background: #f8f6ff;
+            border-color: #6f42c1;
+            color: #6f42c1;
+        }
+        
+        .icon-box {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .whatsapp { background: #25D366; }
+        .email { background: #64748b; }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
