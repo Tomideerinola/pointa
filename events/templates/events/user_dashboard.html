@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Outfit:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon/favicon.ico' %}">
+
     
     <style>
         :root {
@@ -155,13 +158,13 @@
             <a href="{%url 'dashboard'%}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %} "><i class="fa-solid fa-house"></i> Overview</a>
             <a href="{%url 'my_tickets'%}" class="nav-link {% if request.resolver_match.url_name == 'my_tickets' %}active{% endif %}"><i class="fa-solid fa-ticket"></i> My Tickets</a>
             <a href="{%url 'saved_events'%}" class="nav-link {% if request.resolver_match.url_name == 'saved_events' %}active{% endif %}"><i class="fa-solid fa-heart"></i> Saved Events</a>
-            <!-- <a href="" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a> -->
+
             <hr class="my-4 text-muted opacity-25">
             <a href="{% url 'edit_profile' %}" class="nav-link {% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}"><i class="fa-solid fa-gear"></i> Profile Settings</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'logout' %}" class="nav-link text-danger"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
             {% endif %}
-            <!-- <a href="#" class="nav-link text-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a> -->
+
         </nav>
     </aside>
 
@@ -176,105 +179,7 @@
     {% endif %}
         {% block content %}
         {% endblock %}
-        <!-- <header class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <h2 class="fw-800">Hello, {{user.first_name|capfirst}}! 👋</h2>
-                <p class="text-muted">You have 3 upcoming events this month.</p>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <div class="text-end d-none d-md-block">
-                    
-                    <div class="avatar-box rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" 
-                    style="width: 48px; height: 48px; background: linear-gradient(135deg, #6f42c1, #a855f7); font-size: 0.9rem;">
-                   
-
-                       {{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
-
-                    </div>
-                    <div class="small text-muted">Premium Member</div>
-                </div>
-            </div>
-        </header>
-
-        <div class="row g-4 mb-5">
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="icon-shape"><i class="fa-solid fa-calendar-check"></i></div>
-                        <span class="badge bg-success-subtle text-success">+2 new</span>
-                    </div>
-                    <h3 class="fw-800 mb-1">12</h3>
-                    <p class="text-muted small fw-bold mb-0">TOTAL EVENTS ATTENDED</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="icon-shape"><i class="fa-solid fa-wallet"></i></div>
-                    </div>
-                    <h3 class="fw-800 mb-1">₦45,000</h3>
-                    <p class="text-muted small fw-bold mb-0">WALLET BALANCE</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="icon-shape"><i class="fa-solid fa-star"></i></div>
-                    </div>
-                    <h3 class="fw-800 mb-1">450</h3>
-                    <p class="text-muted small fw-bold mb-0">REWARD POINTS</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">Upcoming Events</h4>
-                    <a href="#" class="text-purple text-decoration-none small fw-bold">View All</a>
-                </div>
-                
-                <div class="event-list-item d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="text-center p-2 rounded-3 bg-light" style="min-width: 60px;">
-                            <div class="small fw-bold">DEC</div>
-                            <div class="h5 fw-800 mb-0">24</div>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-0">Detty December: Live in Lagos</h6>
-                            <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i> Eko Energy City</small>
-                        </div>
-                    </div>
-                    <button class="btn btn-outline-purple btn-sm rounded-pill px-3">View Ticket</button>
-                </div>
-
-                <div class="event-list-item d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="text-center p-2 rounded-3 bg-light" style="min-width: 60px;">
-                            <div class="small fw-bold">JAN</div>
-                            <div class="h5 fw-800 mb-0">05</div>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-0">New Year Tech Summit</h6>
-                            <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i> Civic Centre, VI</small>
-                        </div>
-                    </div>
-                    <button class="btn btn-outline-purple btn-sm rounded-pill px-3">View Ticket</button>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <h4 class="fw-bold mb-4">Recommended</h4>
-                <div class="card border-0 rounded-4 overflow-hidden mb-3">
-                    <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=400&q=80" class="card-img-top" height="150" style="object-fit: cover;">
-                    <div class="card-body">
-                        <h6 class="fw-bold">Lagos Jazz Night</h6>
-                        <p class="text-muted small">Based on your interest in "Music"</p>
-                        <a href="#" class="btn btn-purple w-100 btn-sm">Explore</a>
-                    </div>
-                </div>
-            </div>
-        </div> -->
+   
     </main>
 
     <script>

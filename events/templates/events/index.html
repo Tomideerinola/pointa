@@ -89,9 +89,13 @@
                                 Dashboard
                             </a>
                         {% else %}
-                            <a href="{% url 'dashboard' %}" class="btn text-dark fw-bold px-3">
-                                Hello, {{ user.first_name|capfirst }}! 👋
-                            </a>
+                        <a href="{% url 'dashboard' %}" class="dashboard-user-pill">
+                            <div class="user-avatar-circle">
+                                <i class="fa-solid fa-user-astronaut"></i>
+                            </div>
+                            <span class="user-pill-text">Hello, {{ user.first_name|capfirst }}!</span>
+                            <i class="fa-solid fa-chevron-right ms-2 opacity-50" style="font-size: 10px;"></i>
+                        </a>
                         {% endif %}
                 
                         <form method="POST" action="{% url 'logout' %}" class="d-inline">
@@ -386,7 +390,35 @@
     </section>
     
     <footer class="footer-section">
-
+        <div class="contact-widget">
+            <div class="contact-card shadow-lg d-none" id="contactCard">
+                <div class="contact-header">
+                    <h6 class="mb-0 fw-800 text-white">Need help?</h6>
+                    <button class="btn-close btn-close-white small" onclick="toggleContact()"></button>
+                </div>
+                <div class="contact-body p-3">
+                    <p class="small text-muted mb-3">Reach out to our team and we'll get back to you shortly.</p>
+                    <a href="https://wa.me/yournumber" class="contact-method">
+                        <div class="icon-box whatsapp"><i class="fa-brands fa-whatsapp"></i></div>
+                        <div>
+                            <span class="d-block fw-bold">WhatsApp</span>
+                            <span class="small text-muted">Instant response</span>
+                        </div>
+                    </a>
+                    <a href="mailto:support@pointa.com" class="contact-method mt-2">
+                        <div class="icon-box email"><i class="fa-solid fa-envelope"></i></div>
+                        <div>
+                            <span class="d-block fw-bold">Email Support</span>
+                            <span class="small text-muted">Response in 24hrs</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        
+            <button class="fab-btn shadow-lg" onclick="toggleContact()">
+                <i class="fa-solid fa-message"></i>
+            </button>
+        </div>
         <div class="container">
             {% if messages %}
             <div class="messages-container">
@@ -495,6 +527,16 @@ const counters = document.querySelectorAll('.stat-number');
             updateCount();
         });
     }
+
+
+    function toggleContact() {
+    const card = document.getElementById('contactCard');
+    if (card.classList.contains('d-none')) {
+        card.classList.remove('d-none');
+    } else {
+        card.classList.add('d-none');
+    }
+}
 
     // Run when page loads
     window.addEventListener('DOMContentLoaded', startCounters);

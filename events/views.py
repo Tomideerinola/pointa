@@ -385,43 +385,40 @@ def toggle_save_event(request, event_id):
 
 def booking_confirm(request, event_id):
     """
-    Handles ticket selection and shows confirmation page
-    Requires user to be logged in
+    Handles ticket selection and shows confirmation page.
+    Only regular users can book tickets.
     """
-        # Manual authentication check instead of using login required 
+
+
+    # Ensure user is logged in
+
     if not request.user.is_authenticated:
-        messages.warning(
-            request,
-            "You need to login before booking an event."
-        )
-
-
-        # Get login URL dynamically
+        messages.warning(request, "You need to login before booking an event.")
         login_url = reverse("user_login")
-                # Redirect to login with next parameter
         return redirect(f"{login_url}?next={request.path}")
-    
+
     event = get_object_or_404(Event, id=event_id)
 
 
-        # Prevent admin from booking
+    # Prevent admins from booking
+
     if request.user.is_staff or request.user.is_superuser:
         messages.error(request, "Admins cannot book events.")
         return redirect("event_detail", event_id=event_id)
 
-    # Prevent organizer from booking their own event
-# If the user is an organizer
-    if hasattr(request.user, "organizer"):
-        # Check if the event belongs to them
-        if event.organizer == request.user.organizer:
-            messages.error(request, "You cannot book your own event.")
-            return redirect("event_detail", event_id=event_id)
-        else:
-            # Optionally block them from booking any other events too
-            messages.error(request, "Organizers cannot book events.")
-            return redirect("event_detail", event_id=event_id)
+
+    #  Prevent organizers from booking any events
+
+    try:
+        organizer = request.user.organizer
+        # User has an organizer profile, block booking
+        messages.error(request, "Organizers cannot book events.")
+        return redirect("event_detail", event_id=event_id)
+    except:
+        pass  # user is a normal user, allow booking
 
 
+    #  Handle POST request for booking
 
     if request.method == "POST":
         ticket_id = request.POST.get("ticket_id")
@@ -440,7 +437,9 @@ def booking_confirm(request, event_id):
 
         total_amount = ticket.price * quantity
 
-        # Check if user already has a pending order for this event
+
+        #  Check for existing pending order
+
         existing_order = Order.objects.filter(
             user=request.user,
             event=event,
@@ -448,35 +447,45 @@ def booking_confirm(request, event_id):
         ).first()
 
         if existing_order:
-            # Clear previous items (avoid duplicates)
+            # Remove previous items to avoid duplicates
             existing_order.items.all().delete()
             order = existing_order
             order.total_amount = total_amount
             order.save()
         else:
+            # Create a new order with a unique reference
             order = Order.objects.create(
                 user=request.user,
                 event=event,
                 total_amount=total_amount,
-                status="pending"
+                status="pending",
+                reference=str(uuid.uuid4())  # ensures unique reference
             )
 
+
         # Create OrderItem
+
         OrderItem.objects.create(
             order=order,
             ticket=ticket,
             quantity=quantity
         )
 
+
+        # Send context to template
+
         context = {
             "event": event,
             "ticket": ticket,
             "quantity": quantity,
             "total_amount": total_amount,
-            "order": order,  
+            "order": order,
         }
 
         return render(request, "events/booking_confirm.html", context)
+
+
+    # Redirect GET requests to event detail
 
     return redirect("event_detail", event_id=event.id)
 
@@ -844,7 +853,7 @@ def contact(request):
 @login_required(login_url='organizer_login')  #  User must be logged in first
 def payouts(request):
 
-    # 🔐 STEP 1: Ensure ONLY organizers can access this page
+    #  STEP 1: Ensure ONLY organizers can access this page
     # If user does not have an Organizer profile, redirect them
     if not hasattr(request.user, "organizer"):
         messages.error(request, "Only organizers can access payouts.")
@@ -853,7 +862,7 @@ def payouts(request):
     # Get the organizer object linked to the logged-in user
     organizer = request.user.organizer
 
-    # 🔢 STEP 2: Calculate TOTAL earnings from PAID orders only
+    #  STEP 2: Calculate TOTAL earnings from PAID orders only
     # We filter orders:
     # - That belong to events created by this organizer
     # - That have status = "paid"

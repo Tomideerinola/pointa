@@ -624,87 +624,139 @@ border-bottom: none;
 
 /* message modal styling  */
         /* Widget Container */
-        .contact-widget {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 9999;
-        }
-        
-        /* Floating Button */
-        .fab-btn {
-            width: 60px;
-            height: 60px;
-            background: #6f42c1;
-            color: white;
-            border-radius: 50%;
-            border: none;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-        }
-        
-        .fab-btn:hover {
-            transform: scale(1.1) rotate(5deg);
-            background: #5a32a3;
-        }
-        
-        /* Contact Card */
-        .contact-card {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
-            width: 280px;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-            animation: slideUp 0.3s ease-out;
-        }
-        
-        .contact-header {
-            background: #6f42c1;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .contact-method {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #1a1a2e;
-            transition: 0.2s;
-            border: 1px solid transparent;
-        }
-        
-        .contact-method:hover {
-            background: #f8f6ff;
-            border-color: #6f42c1;
-            color: #6f42c1;
-        }
-        
-        .icon-box {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-        
-        .whatsapp { background: #25D366; }
-        .email { background: #64748b; }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .contact-widget {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 9999;
+    }
+    
+    /* Floating Button */
+    .fab-btn {
+        width: 60px;
+        height: 60px;
+        background: #6f42c1;
+        color: white;
+        border-radius: 50%;
+        border: none;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+    }
+    
+    .fab-btn:hover {
+        transform: scale(1.1) rotate(5deg);
+        background: #5a32a3;
+    }
+    
+    /* Contact Card */
+    .contact-card {
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        width: 280px;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        animation: slideUp 0.3s ease-out;
+    }
+    
+    .contact-header {
+        background: #6f42c1;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .contact-method {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #1a1a2e;
+        transition: 0.2s;
+        border: 1px solid transparent;
+    }
+    
+    .contact-method:hover {
+        background: #f8f6ff;
+        border-color: #6f42c1;
+        color: #6f42c1;
+    }
+    
+    .icon-box {
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .whatsapp { background: #25D366; }
+    .email { background: #64748b; }
+    
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+
+
+        /* user dashboard index pill  */
+
+        .dashboard-user-pill {
+        display: inline-flex;
+        align-items: center;
+        background: #f8fafc; /* Very light grey */
+        border: 1px solid #e2e8f0;
+        padding: 6px 16px 6px 8px;
+        border-radius: 100px;
+        text-decoration: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #0f172a !important;
+    }
+
+    .user-avatar-circle {
+        width: 32px;
+        height: 32px;
+        background: var(--primary-purple);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-size: 0.8rem;
+        box-shadow: 0 4px 10px rgba(109, 40, 217, 0.2);
+    }
+
+    .user-pill-text {
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    /* The "Alive" Hover State */
+    .dashboard-user-pill:hover {
+        background: #ffffff;
+        border-color: var(--primary-purple);
+        box-shadow: 0 10px 20px rgba(109, 40, 217, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .dashboard-user-pill:hover .user-avatar-circle {
+        transform: scale(1.1) rotate(-10deg);
+        background: #5b21b6; /* Slightly darker purple on hover */
+    }
+
+    .dashboard-user-pill:active {
+        transform: translateY(0);
+    }

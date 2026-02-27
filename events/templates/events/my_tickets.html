@@ -162,7 +162,7 @@
                     </div>
                     <div class="col-6 col-md-4">
                         <div class="info-label">Time</div>
-                        <div class="info-value">{{ order.event.time|time:"h:i A" }}</div>
+                        <div class="info-value">{{ order.event.start_time|time:"h:i A" }}</div>
                     </div>
                     <div class="col-12 col-md-4">
                         <div class="info-label">Tier</div>
@@ -177,7 +177,7 @@
                 <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
                     <div>
                         <div class="info-label">Reference</div>
-                        <div class="small fw-800 text-dark">{{ order.reference|upper }}</div>
+                        <div class="small fw-800 text-dark">PTA-{{ order.reference|slice:":8"|upper }}</div>
                     </div>
                     <div class="text-end">
                         <div class="info-label">Paid</div>

@@ -172,7 +172,7 @@
                     
                     <div class="meta-item">
                         <i class="fa-solid fa-location-dot text-danger opacity-50"></i>
-                        {{ saved.event.location|truncatechars:20 }}
+                        {{ saved.event.venue|truncatechars:20 }}
                     </div>
 
                     <a href="{% url 'event_detail' saved.event.pk %}" class="btn btn-get-ticket text-center text-decoration-none d-block">
