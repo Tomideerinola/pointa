@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&family=Caveat:wght@700&display=swap" rel="stylesheet">
     
     
     <style>
@@ -938,6 +940,87 @@ TABLETS & MEDIUM DEVICES
     @media (max-width: 768px) {
         .letter-spacing-2 { letter-spacing: 1px; }
     }
+
+    .hero-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.5rem, 6vw, 4.5rem); /* Responsive sizing */
+        color: #0f172a;
+        letter-spacing: -2px;
+        line-height: 1.1;
+    }
+
+    .cursive-accent {
+        font-family: 'Pinyon Script', cursive;
+        font-weight: 400;
+        font-size: 1.2em; /* Makes the cursive larger than the rest */
+        display: inline-block;
+        
+        /* The "Glow" Gradient */
+        background: linear-gradient(135deg, #6d28d9 0%, #d946ef 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        
+        /* The "Signature" Tilt */
+        transform: rotate(-3deg);
+        margin-left: 10px;
+        
+        /* Subtle glow to make it pop */
+        filter: drop-shadow(0 0 15px rgba(217, 70, 239, 0.3));
+        
+        /* Ensures the tail of the 'L' or 'f' isn't cut off */
+        padding-right: 15px;
+    }
+
+    /* Animation to make it feel "Alive" */
+    @keyframes signature-float {
+        0%, 100% { transform: rotate(-3deg) translateY(0); }
+        50% { transform: rotate(-1deg) translateY(-5px); }
+    }
+
+    .cursive-accent {
+        animation: signature-float 4s ease-in-out infinite;
+    }
+
+
+    .hero-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        color: #ffffff; /* Pure white for maximum readability */
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+    }
+
+    .life-accent {
+        font-family: 'Caveat', cursive;
+        font-weight: 700;
+        font-size: 1.3em;
+        display: inline-block;
+        margin-left: 8px;
+        
+        /* Contrast Gradient: From Pure White to a bright Cyan/Electric Blue */
+        /* This cuts through a purple background like a knife */
+        background: linear-gradient(to right, #ffffff, #22d3ee);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        /* Subtle tilt without the blur */
+        transform: rotate(-2deg);
+        
+        /* Adds a tiny bit of "pop" without making it unreadable */
+        text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+    }
+
+    /* Subtle entrance animation */
+    .hero-title {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
     </style>
 </head>
 <body>
@@ -1043,7 +1126,15 @@ TABLETS & MEDIUM DEVICES
     <section class="discovery-hero-v2">
         <div class="container text-center">
             <div class="hero-badge">Explore what's happening</div>
-            <h1 class="hero-title">Don't miss out on <span class="text-gradient">Life.</span></h1>
+            <!-- <h1 class="hero-title">Don't miss out on <span class="text-gradient">Life.</span></h1>
+            <h1 class="hero-title">
+                Don't miss out on 
+                <span class="cursive-accent">Life.</span>
+            </h1> -->
+            <h1 class="hero-title">
+                Don't miss out on 
+                <span class="life-accent">Life.</span>
+            </h1>
             <p class="hero-subtitle">Find the most exciting conferences, workshops, and concerts near you.</p>
             
             <form action="{% url 'events_list' %}" method="GET" class="pointa-search-bar">
