@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile, Organizer, Event, Ticket, NewsletterEmail
+from .models import Profile, Organizer, Event, Ticket, NewsletterEmail,ContactMessage
 from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
@@ -202,7 +202,7 @@ class EventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'].empty_label = "Select Category"
-        self.fields['state'].empty_label = "Select State"
+
 
     class Meta:
         model = Event
@@ -297,6 +297,13 @@ class EventForm(forms.ModelForm):
                 raise ValidationError("End time must be after start time.")
 
         return cleaned_data
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Replace the default blank choice
+        self.fields["state"].choices = [
+            ("", "Select a State"),
+        ] + list(self.fields["state"].choices)
 
 
 
@@ -461,3 +468,42 @@ class NewsletterForm(forms.ModelForm):
                 "required": True
             })
         }
+
+
+
+class ContactForm(forms.ModelForm):
+
+    class Meta:
+        model = ContactMessage
+        fields = ["name", "email", "subject", "message"]
+
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "class": "form-control modern-input",
+                "placeholder": "John Doe",
+                "id": "floatingName"
+            }),
+            "email": forms.EmailInput(attrs={
+                "class": "form-control modern-input",
+                "placeholder": "name@example.com",
+                "id": "floatingEmail"
+            }),
+            "subject": forms.Select(attrs={
+                "class": "form-select modern-input",
+                "id": "floatingSelect"
+            }),
+            "message": forms.Textarea(attrs={
+                "class": "form-control modern-input",
+                "placeholder": "Leave a message here",
+                "style": "height:150px",
+                "id": "floatingTextarea"
+            }),
+        }
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+
+    #     # 🔥 Replace the default blank choice
+    #     self.fields["subject"].choices = [
+    #         ("", "Select an option"),
+    #     ] + list(self.fields["subject"].choices)

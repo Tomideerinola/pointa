@@ -389,3 +389,28 @@ class Payout(models.Model):
 
     def __str__(self):
         return f"{self.organizer.user.username} - {self.amount} - {self.status}"
+    
+
+
+class ContactMessage(models.Model):
+
+    SUBJECT_CHOICES = [
+        ("", "Select an option"),
+        ("ticket", "Ticket Inquiry"),
+        ("organizer", "Organizer Partnership"),
+        ("support", "General Support"),
+    ]
+
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=20, choices=SUBJECT_CHOICES)
+    message = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_resolved = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name} - {self.get_subject_display()}"

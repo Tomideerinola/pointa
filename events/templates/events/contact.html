@@ -159,7 +159,7 @@
                                 <div class="info-icon-v2"><i class="fa-solid fa-phone"></i></div>
                                 <div>
                                     <div class="small fw-800 opacity-50 text-uppercase ls-1">WhatsApp</div>
-                                    <div class="fw-bold">+234 810 000 0000</div>
+                                    <div class="fw-bold">+234 703 985 3440</div>
                                 </div>
                             </div>
                             
@@ -185,43 +185,57 @@
 
             <div class="col-lg-7">
                 <div class="p-5 h-100 bg-white">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-success">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     <h3 class="fw-800 mb-4 h2">Send a Message</h3>
-                    <form action="#" method="POST">
+                    <form method="POST">
                         {% csrf_token %}
+                    
                         <div class="row g-3">
+                    
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control modern-input" id="floatingName" placeholder="John Doe">
+                                    {{ form.name }}
                                     <label for="floatingName" class="text-muted fw-bold small">YOUR NAME</label>
                                 </div>
                             </div>
+                    
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="email" class="form-control modern-input" id="floatingEmail" placeholder="name@example.com">
+                                    {{ form.email }}
                                     <label for="floatingEmail" class="text-muted fw-bold small">EMAIL ADDRESS</label>
                                 </div>
                             </div>
+                    
                             <div class="col-12">
                                 <div class="form-floating mb-3">
-                                    <select class="form-select modern-input" id="floatingSelect">
-                                        <option selected>Ticket Inquiry</option>
-                                        <option>Organizer Partnership</option>
-                                        <option>General Support</option>
-                                    </select>
-                                    <label for="floatingSelect" class="text-muted fw-bold small">WHAT DO YOU NEED HELP WITH?</label>
+                                    {{ form.subject }}
+                                    <label for="floatingSelect" class="text-muted fw-bold small">
+                                        WHAT DO YOU NEED HELP WITH?
+                                    </label>
                                 </div>
                             </div>
+                    
                             <div class="col-12">
                                 <div class="form-floating mb-4">
-                                    <textarea class="form-control modern-input" placeholder="Leave a message here" id="floatingTextarea" style="height: 150px"></textarea>
-                                    <label for="floatingTextarea" class="text-muted fw-bold small">YOUR MESSAGE</label>
+                                    {{ form.message }}
+                                    <label for="floatingTextarea" class="text-muted fw-bold small">
+                                        YOUR MESSAGE
+                                    </label>
                                 </div>
                             </div>
+                    
                             <div class="col-12">
                                 <button type="submit" class="btn btn-purple w-100 py-3 rounded-pill fw-800 shadow-lg glow-on-hover">
                                     Submit Message <i class="fa-solid fa-paper-plane ms-2"></i>
                                 </button>
                             </div>
+                    
                         </div>
                     </form>
                 </div>

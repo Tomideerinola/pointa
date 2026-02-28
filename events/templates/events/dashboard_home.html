@@ -327,7 +327,7 @@
                     ✨ Member Dashboard
                 </span>
                 <h1 class="hero-title mb-3">
-                    Hey, {{ user.first_name|default:user.username }}!
+                    Hey, {{ user.first_name|default:user.username|capfirst }}!
                 </h1>
                 <p class="text-white opacity-75 fs-5 mb-0">
                     You've got <span class="fw-bold opacity-100">{{ upcoming_events.count }} events</span> locked in. 

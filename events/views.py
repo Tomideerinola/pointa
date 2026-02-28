@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Sum
 from django.shortcuts import render, redirect , get_object_or_404
-from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet,OrganizerForm,UserForm,UserUpdateForm,NewsletterForm
+from .forms import UserRegisterForm, OrganizerRegisterForm, UserLoginForm, EventForm, OrganizerLoginForm,TicketFormSet,OrganizerForm,UserForm,UserUpdateForm,NewsletterForm,ContactForm
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -943,3 +943,23 @@ def payouts(request):
     }
 
     return render(request, "events/payouts.html", context)
+
+
+def contact(request):
+    categories = Category.objects.all()
+
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+
+        if form.is_valid():
+            form.save()  # Saves directly to database
+            messages.success(request, "Your message has been sent successfully!")
+            form = ContactForm()  # reset form
+
+    else:
+        form = ContactForm()
+
+    return render(request, 'events/contact.html', {
+        'categories': categories,
+        'form': form
+    })

@@ -14,7 +14,14 @@
             --pointa-purple: #6f42c1; 
             --soft-purple: #f3effb; 
             --dark-navy: #1a1a2e;
+            --primary-purple: #6f42c1;
+            --dark-purple: #4b228a;
+            --light-purple: #f3e8ff;
+            --accent-violet: #8a2be2;
+            --text-main: #1a1a1a;
         }
+
+
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
@@ -472,7 +479,7 @@
 
 
 
-    .dashboard-user-pill {
+        .dashboard-user-pill {
         display: inline-flex;
         align-items: center;
         background: #f8fafc; /* Very light grey */
@@ -505,7 +512,7 @@
 
     /* The "Alive" Hover State */
     .dashboard-user-pill:hover {
-
+        background: #ffffff;
         border-color: var(--primary-purple);
         box-shadow: 0 10px 20px rgba(109, 40, 217, 0.1);
         transform: translateY(-2px);
@@ -662,9 +669,10 @@
                         <iframe 
                             width="100%" 
                             height="100%" 
-                            frameborder="0" style="border:0"
-                            src="https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q={{ event.venue|urlencode }},{{ event.city|urlencode }}" 
-                            allowfullscreen>
+                            style="border:0"
+                            loading="lazy"
+                            allowfullscreen
+                            src="https://www.google.com/maps?q={{ event.venue|urlencode }} {{ event.city|urlencode }}&output=embed">
                         </iframe>
                     </div>
                     <p class="small text-muted mt-3 text-center">

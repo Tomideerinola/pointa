@@ -970,17 +970,7 @@ TABLETS & MEDIUM DEVICES
             <div class="collapse navbar-collapse" id="navPointa">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link px-3" href="{%url 'events_list'%}">Browse Events</a></li>
-                    <!-- <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle px-3" href="#" id="catDrop" role="button" data-bs-toggle="dropdown">Categories</a>
-                        <ul class="dropdown-menu border-0 shadow-sm mt-3">
-                            <li><a class="dropdown-item" href="#">Conferences</a></li>
-                            <li><a class="dropdown-item" href="#">Workshops</a></li>
-                            <li><a class="dropdown-item" href="#">Music & Art</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">All Categories</a></li>
-                            
-                        </ul>
-                    </li> -->
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle px-3" href="#" id="catDrop" role="button" data-bs-toggle="dropdown">
                             {% if selected_categories %}{{ selected_categories.name }}{% else %}Categories{% endif %}
