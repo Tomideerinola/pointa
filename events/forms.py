@@ -202,6 +202,9 @@ class EventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'].empty_label = "Select Category"
+        self.fields["state"].choices = [
+            ("", "Select a State"),
+        ] + list(self.fields["state"].choices)
 
 
     class Meta:
@@ -297,13 +300,8 @@ class EventForm(forms.ModelForm):
                 raise ValidationError("End time must be after start time.")
 
         return cleaned_data
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-        # Replace the default blank choice
-        self.fields["state"].choices = [
-            ("", "Select a State"),
-        ] + list(self.fields["state"].choices)
+
 
 
 
