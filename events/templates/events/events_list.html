@@ -1106,12 +1106,30 @@ TABLETS & MEDIUM DEVICES
                                            value="{{ loc }}"
                                            {% if loc in selected_locations %}checked{% endif %}>
                                     <label class="form-check-label small">
-                                        {{ loc }}
+                                        {{ loc|capfirst }}
                                     </label>
                                 </div>
                             {% endfor %}
                         </div>
-                
+                        <div class="mb-4">
+                            <label class="fw-bold small text-uppercase mb-2 d-block text-muted">
+                                Price Range
+                            </label>
+                        
+                            <div class="d-flex gap-2">
+                                <input type="number"
+                                       name="min_price"
+                                       value="{{ request.GET.min_price }}"
+                                       placeholder="Min"
+                                       class="form-control bg-light border-0 rounded-3">
+                        
+                                <input type="number"
+                                       name="max_price"
+                                       value="{{ request.GET.max_price }}"
+                                       placeholder="Max"
+                                       class="form-control bg-light border-0 rounded-3">
+                            </div>
+                        </div>
                         <button type="submit"
                                 class="btn btn-purple w-100 rounded-3 py-2 fw-bold"
                                 style="background: var(--p-purple); color: white;">

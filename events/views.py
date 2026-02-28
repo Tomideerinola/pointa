@@ -310,6 +310,8 @@ def events_list(request):
     city = request.GET.get("city", "").strip()  # city filter
     category_id = request.GET.get("category")
     locations = request.GET.getlist("location")  # for checkboxes
+    min_price = request.GET.get("min_price")
+    max_price = request.GET.get("max_price")
 
     selected_categories = None
 
@@ -334,6 +336,14 @@ def events_list(request):
     # Filter by multiple checkbox locations
     if locations:
         events = events.filter(state__in=locations)
+
+
+
+    if min_price:
+        events = events.filter(tickets__price__gte=min_price).distinct()
+
+    if max_price:
+        events = events.filter(tickets__price__lte=max_price).distinct()
 
     upcoming_events = events.filter(
         date__gte=now
