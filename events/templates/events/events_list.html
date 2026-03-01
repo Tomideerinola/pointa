@@ -1021,6 +1021,17 @@ TABLETS & MEDIUM DEVICES
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* to make the nav bar dropdown scroll  */
+    .navbar .dropdown-menu {
+    max-height: 400px;      /* Adjust based on your preference */
+    overflow-y: auto;       /* Allow scrolling */
+}
+
+/* Optional: make sure parent containers don’t clip it */
+.navbar, .nav-item.dropdown, header, .nav-container {
+    overflow: visible !important;
+}
     </style>
 </head>
 <body>

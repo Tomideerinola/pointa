@@ -760,3 +760,17 @@ border-bottom: none;
     .dashboard-user-pill:active {
         transform: translateY(0);
     }
+
+
+    /* dropdown nav to scroll  */
+
+
+    .navbar .dropdown-menu {
+        max-height: 400px;      /* Adjust based on your preference */
+        overflow-y: auto;       /* Allow scrolling */
+    }
+    
+    /* Optional: make sure parent containers don’t clip it */
+    .navbar, .nav-item.dropdown, header, .nav-container {
+        overflow: visible !important;
+    }

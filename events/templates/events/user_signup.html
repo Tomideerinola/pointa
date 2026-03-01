@@ -13,9 +13,14 @@
 
 <style>
     :root { --primary-purple: #6f42c1; --dark-purple: #4b228a; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; overflow: hidden; }
-    
-    .auth-split { height: 100vh; display: flex; }
+    body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    height: auto;        /* Let body expand with content */
+    min-height: 100vh;   /* Still cover viewport */
+    overflow-y: auto;    /* Allow vertical scroll */
+    }
+
+    .auth-split { min-height: 100vh; display: flex; }
     
     .auth-visual {
         flex: 1;
